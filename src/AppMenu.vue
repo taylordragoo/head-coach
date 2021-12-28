@@ -1,8 +1,8 @@
 <template>
     <div class="layout-sidebar" @click="onMenuClick">
-        <router-link to="/" class="logo">
-            <img id="app-logo" class="logo-image" src="layout/images/logo-white.svg" alt="diamond-vue" />
-            <span class="app-name">DIAMOND</span>
+        <router-link to="/dashboard" class="logo">
+<!--            <img id="app-logo" class="logo-image" src="layout/images/logo-white.svg" alt="diamond-vue" />-->
+            <span class="app-name">Head Coach 22</span>
         </router-link>
 
         <div class="layout-menu-container">

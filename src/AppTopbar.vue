@@ -1,15 +1,10 @@
 <template>
     <div class="layout-topbar">
         <div class="topbar-left">
-            <a tabindex="0" class="menu-button" @click="onMenuButtonClick">
-                <i class="pi pi-chevron-left"></i>
-            </a>
 
             <router-link to="/" class="horizontal-logo">
                 <img id="logo-horizontal" class="horizontal-logo" src="layout/images/logo-white.svg" alt="diamond-layout" />
             </router-link>
-
-            <span class="topbar-separator"></span>
 
             <div class="layout-breadcrumb viewname" style="text-transform: uppercase">
                 <template v-if="$route.meta.breadcrumb">
@@ -86,10 +81,63 @@
                     </ul>
                 </li>
 
+                <li class="notifications-item" :class="{ 'active-menuitem ': topbarNotificationMenuActive }">
+                    <a href="#" tabindex="0" @click="onTopbarNotificationMenuButtonClick">
+                        <i class="pi pi-globe"></i>
+<!--                        <span class="topbar-badge">5</span>-->
+                    </a>
+<!--                    <ul class="notifications-menu fade-in-up">-->
+<!--                        <li role="menuitem">-->
+<!--                            <a href="#" tabindex="0">-->
+<!--                                <i class="pi pi-shopping-cart"></i>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-summary">New Order</div>-->
+<!--                                    <div class="notification-detail">You have <strong>3</strong> new orders.</div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li role="menuitem">-->
+<!--                            <a href="#" tabindex="0">-->
+<!--                                <i class="pi pi-check-square"></i>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-summary">Withdrawn Completed</div>-->
+<!--                                    <div class="notification-detail">Funds are on their way.</div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li role="menuitem">-->
+<!--                            <a href="#" tabindex="0">-->
+<!--                                <i class="pi pi-chart-line"></i>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-summary">Monthly Reports</div>-->
+<!--                                    <div class="notification-detail">New reports are ready.</div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li role="menuitem">-->
+<!--                            <a href="#" tabindex="0">-->
+<!--                                <i class="pi pi-comments"></i>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-summary">Comments</div>-->
+<!--                                    <div class="notification-detail"><strong>2</strong> new comments.</div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li role="menuitem">-->
+<!--                            <a href="#" tabindex="0">-->
+<!--                                <i class="pi pi-exclamation-circle"></i>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-summary">Chargeback Request</div>-->
+<!--                                    <div class="notification-detail"><strong>1</strong> to review.</div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+                </li>
+
                 <li class="profile-item" :class="{ 'active-menuitem fadeInDown': topbarUserMenuActive }">
                     <a href="#" @click="onTopbarUserMenuButtonClick">
-                        <img src="demo/images/avatar/profile.jpg" alt="diamond-layout" class="profile-image" />
-                        <span class="profile-name">Amelia Stone</span>
+                        <span class="profile-name">Ted Jones</span>
                     </a>
                     <ul class="profile-menu fade-in-up">
                         <li>
@@ -117,18 +165,12 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="/#/">
                                 <i class="pi pi-power-off"></i>
-                                <span>Logout</span>
+                                <span>Exit</span>
                             </a>
                         </li>
                     </ul>
-                </li>
-
-                <li class="right-sidebar-item">
-                    <a href="#" tabindex="0" @click="onRightMenuClick">
-                        <i class="pi pi-align-right"></i>
-                    </a>
                 </li>
             </ul>
         </div>

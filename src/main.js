@@ -45,6 +45,7 @@ import Knob from 'primevue/knob';
 import Listbox from 'primevue/listbox';
 import MegaMenu from 'primevue/megamenu';
 import Menu from 'primevue/menu';
+import MainMenu from './pages/MainMenu';
 import Menubar from 'primevue/menubar';
 import Message from 'primevue/message';
 import MultiSelect from 'primevue/multiselect';
@@ -100,10 +101,17 @@ import Access from './pages/Access';
 import Error from './pages/Error';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import NewGame from './pages/NewGame';
+import { createStore } from 'vuex';
+
 const app = createApp({
     computed: {
         ViewComponent () {
 			switch (this.$route.path) {
+				case '/':
+					return MainMenu;
+				case '/new':
+					return NewGame;
 				case '/login':
 					return Login;
 				case '/error':
@@ -172,6 +180,7 @@ app.component('Knob', Knob);
 app.component('Listbox', Listbox);
 app.component('MegaMenu', MegaMenu);
 app.component('Menu', Menu);
+app.component('MainMenu', MainMenu);
 app.component('Menubar', Menubar);
 app.component('Message', Message);
 app.component('MultiSelect', MultiSelect);
@@ -213,5 +222,38 @@ app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 
 app.component('BlockViewer', BlockViewer);
+
+// eslint-disable-next-line no-unused-vars
+function createNewStore() {
+	// eslint-disable-next-line no-unused-vars
+	let store = createStore({
+		state () {
+			return {
+				count: 0,
+				sFirstName: '',
+				sLastName: '',
+				sAge: 0,
+				sExperience: 0,
+			}
+		},
+		mutations: {
+			increment (state) {
+				state.count++
+			},
+			sLastName(state, data) {
+				state.sLastName = data
+			}
+		},
+		getters: {
+			fullName: function(state) {
+				return `${state.sFirstName} ${state.sLastName}`
+			}
+		}
+	})
+
+	app.use(store)
+}
+
+createNewStore();
 
 app.mount('#app');

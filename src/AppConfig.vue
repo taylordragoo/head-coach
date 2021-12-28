@@ -190,7 +190,7 @@ export default {
                 { name: "teal", color: "#26A69A" },
             ],
             logoColor: 'white',
-            menuColor: 'darkgray',
+            menuColor: 'black',
             d_colorScheme: this.colorScheme,
             d_menuMode: this.layoutMode,
             d_menuTheme: this.menuTheme
