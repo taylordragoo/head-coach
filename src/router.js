@@ -7,11 +7,6 @@ const routes = [
         component: () => import('./pages/MainMenu.vue'),
     },
     {
-        path: '/new',
-        name: 'new-game',
-        component: () => import('./pages/NewGame.vue'),
-    },
-    {
         path: '/dashboard',
         name: 'dashboard',
         exact: true,

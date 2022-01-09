@@ -64,7 +64,7 @@
                         <a href='/#/dashboard'><Button type="button" label="Continue" style="width:20rem" class="mb-2" /></a>
                     </div>
                     <div class='row'>
-                        <a href='/#/dashboard'><Button type="button" label="New" style="width:20rem" class="mb-2"/></a>
+                        <Button type="button" @click="openNew" label="New" style="width:20rem" class="mb-2"/>
                     </div>
                     <div class='row'>
                         <Button type="button" label="Editor" style="width:20rem" class="mb-2"/>
@@ -79,9 +79,120 @@
                 <div class="row"></div>
             </div>
         </div>
+
+        <Dialog v-model:visible="coachDialog" :style="{width: '800px'}" header="Coach Details" :modal="true" class="p-fluid">
+            <div class='formgrid grid'>
+                <div class="field col">
+                    <label for="fname">First Name</label>
+                    <InputText id="name" v-model='firstName' required="true" autofocus :class="{'p-invalid': submitted && !coach.firstName}" />
+                    <small class="p-invalid" v-if="submitted && !coach.firstName">First Name is required.</small>
+                </div>
+                <div class="field col">
+                    <label for="lname">Last Name</label>
+                    <InputText id="name" v-model="lastName" required="true" autofocus :class="{'p-invalid': submitted && !coach.lastName}" />
+                    <small class="p-invalid" v-if="submitted && !coach.lastName">Last Name is required.</small>
+                </div>
+            </div>
+
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label for="age">Age</label>
+                    <InputNumber id="age" v-model="age" required="true" autofocus :class="{'p-invalid': submitted && !coach.age}" />
+                    <small class="p-invalid" v-if="submitted && !coach.age">Age is required.</small>
+                </div>
+
+                <div class="field col">
+                    <label for="exp">Playing Experience</label>
+                    <Dropdown id="inventoryStatus" v-model='coach.exp' @change='updateExp' :options="statuses" optionLabel="label" placeholder="Past playing experience...">
+                        <template>
+                            <div>{{statuses.label}}</div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+
+            <template #footer>
+                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
+                <Button label="Create" icon="pi pi-check" class="p-button-text" @click="saveCoach" />
+            </template>
+        </Dialog>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+    data()
+    {
+        return {
+            coachDialog: false,
+            coach: {},
+            statuses: [
+                {label: 'None', value: 0 },
+                {label: 'High School', value: 1 },
+                {label: 'College', value: 2 },
+                {label: 'Professional', value: 3 },
+                {label: 'Hall Of Fame', value: 4 }
+            ]
+        }
+    },
+    computed: {
+        firstName: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sFirstName
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateFirstName', value)
+            }
+        },
+        lastName: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sLastName
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateLastName', value)
+            }
+        },
+        age: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sAge
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateAge', value)
+            }
+        },
+        exp: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sExperience
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateExp', value)
+            }
+        }
+    },
+    methods: {
+        openNew() {
+            this.coach = {};
+            this.submitted = false;
+            this.coachDialog = true;
+        },
+        hideDialog() {
+            this.coachDialog = false;
+            this.submitted = false;
+        },
+        updateExp() {
+            this.exp = this.coach.exp;
+        },
+        saveCoach() {
+
+        }
+    }
+}
 </script>

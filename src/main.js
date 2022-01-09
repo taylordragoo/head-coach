@@ -101,7 +101,6 @@ import Access from './pages/Access';
 import Error from './pages/Error';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-import NewGame from './pages/NewGame';
 import { createStore } from 'vuex';
 
 const app = createApp({
@@ -110,8 +109,6 @@ const app = createApp({
 			switch (this.$route.path) {
 				case '/':
 					return MainMenu;
-				case '/new':
-					return NewGame;
 				case '/login':
 					return Login;
 				case '/error':
@@ -229,25 +226,26 @@ function createNewStore() {
 	let store = createStore({
 		state () {
 			return {
-				count: 0,
 				sFirstName: '',
 				sLastName: '',
-				sAge: 0,
-				sExperience: 0,
+				sAge: null,
+				sExperience: null,
 			}
 		},
 		mutations: {
-			increment (state) {
-				state.count++
+			updateFirstName(state, payload) {
+				state.sFirstName = payload
 			},
-			sLastName(state, data) {
-				state.sLastName = data
+			updateLastName(state, payload) {
+				state.sLastName = payload
+			},
+			updateAge(state, payload) {
+				state.sAge = payload
+			},
+			updateExp(state, payload) {
+				state.sExperience = payload.label
 			}
-		},
-		getters: {
-			fullName: function(state) {
-				return `${state.sFirstName} ${state.sLastName}`
-			}
+
 		}
 	})
 
