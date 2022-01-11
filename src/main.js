@@ -230,6 +230,11 @@ function createNewStore() {
 				sLastName: '',
 				sAge: null,
 				sExperience: null,
+				sTeams: [],
+				sPlayers: [],
+				sUser: {},
+				sWorld: {},
+				sDb: null
 			}
 		},
 		mutations: {
@@ -244,8 +249,22 @@ function createNewStore() {
 			},
 			updateExp(state, payload) {
 				state.sExperience = payload.label
+			},
+			updateTeams(state, payload) {
+				state.sTeams = payload
+			},
+			updatePlayers(state, payload) {
+				state.sPlayers = payload
+			},
+			updateUser(state, payload) {
+				state.sUser = payload
+			},
+			updateWorld(state, payload) {
+				state.sWorld = payload
+			},
+			updateDb(state, payload) {
+				state.sDB = payload
 			}
-
 		}
 	})
 

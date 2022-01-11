@@ -8,11 +8,11 @@ const routes = [
     },
     {
         path: '/dashboard',
-        name: 'dashboard',
+        name: 'career dashboard',
         exact: true,
-        component: () => import('./components/Dashboard.vue'),
+        component: () => import('./components/CareerDashboard'),
         meta: {
-            breadcrumb: [{ parent: 'Dashboard', label: 'Dashboard' }],
+            breadcrumb: [{ parent: 'Dashboard', label: 'Career Dashboard' }],
         },
     },
     {

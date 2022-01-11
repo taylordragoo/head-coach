@@ -137,7 +137,7 @@
 
                 <li class="profile-item" :class="{ 'active-menuitem fadeInDown': topbarUserMenuActive }">
                     <a href="#" @click="onTopbarUserMenuButtonClick">
-                        <span class="profile-name">Ted Jones</span>
+                        <span class="profile-name">{{ this.$store.state.sFirstName + ' ' + this.$store.state.sLastName }}</span>
                     </a>
                     <ul class="profile-menu fade-in-up">
                         <li>

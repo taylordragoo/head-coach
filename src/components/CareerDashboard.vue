@@ -9,7 +9,7 @@
                     <span class="overview-title">Players</span>
                     <div class="grid overview-detail">
                         <div class="col-6">
-                            <div class="overview-number" type='text'>640</div>
+                            <div class="overview-number" type='text' >640</div>
                             <div class="overview-subtext">Pending</div>
                         </div>
                         <div class="col-6">
@@ -86,28 +86,28 @@
                         <div class="col-12">
                             <div id="order-tabs-container" class="grid order-tabs">
                                 <div class="order-tab order-tab-new col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
-                                    data-label="New Orders" data-index="0" data-stroke="#BBDEFB" data-fill="rgba(100, 181, 246, 0.2)" >
+                                     data-label="New Orders" data-index="0" data-stroke="#BBDEFB" data-fill="rgba(100, 181, 246, 0.2)" >
                                     <i class="pi pi-plus-circle"></i>
                                     <span class="order-label">New</span>
                                     <i class="stat-detail-icon icon-arrow-right-circle"></i>
                                     <img src="demo/images/dashboard/graph-new.svg" alt="diamond-vue" />
                                 </div>
                                 <div class="order-tab order-tab-completed col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
-                                    data-label="Completed Orders" data-index="1" data-stroke="#C5CAE9" data-fill="rgba(121, 134, 203, 0.2)">
+                                     data-label="Completed Orders" data-index="1" data-stroke="#C5CAE9" data-fill="rgba(121, 134, 203, 0.2)">
                                     <i class="pi pi-check-circle"></i>
                                     <span class="order-label">Completed</span>
                                     <i class="stat-detail-icon icon-arrow-right-circle"></i>
                                     <img src="demo/images/dashboard/graph-completed.svg" alt="diamond-vue" />
                                 </div>
-                                <div class="order-tab order-tab-refunded col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);" 
-                                        data-label="Refunded Orders" data-index="2" data-stroke="#B2DFDB" data-fill="rgba(224, 242, 241, 0.5)">
+                                <div class="order-tab order-tab-refunded col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
+                                     data-label="Refunded Orders" data-index="2" data-stroke="#B2DFDB" data-fill="rgba(224, 242, 241, 0.5)">
                                     <i class="pi pi-refresh"></i>
                                     <span class="order-label">Refunded</span>
                                     <i class="stat-detail-icon icon-arrow-right-circle"></i>
                                     <img src="demo/images/dashboard/graph-refunded.svg" alt="diamond-vue" />
                                 </div>
                                 <div class="order-tab order-tab-cancelled col-6 md:col-3" @click="changeDataset($event);  refreshDataset($event);"
-                                    data-label="Cancelled Orders" data-index="3" data-stroke="#B2EBF2" data-fill="rgba(224, 247, 250, 0.5)">
+                                     data-label="Cancelled Orders" data-index="3" data-stroke="#B2EBF2" data-fill="rgba(224, 247, 250, 0.5)">
                                     <i class="pi pi-times-circle"></i>
                                     <span class="order-label">Cancelled</span>
                                     <i class="stat-detail-icon icon-arrow-right-circle"></i>
@@ -159,7 +159,7 @@
                         </Column>
                         <Column bodyStyle="text-align: center">
                             <template #body> <Button type="button" icon="pi pi-search"></Button></template
-                        ></Column>
+                            ></Column>
                     </DataTable>
                 </div>
             </div>
