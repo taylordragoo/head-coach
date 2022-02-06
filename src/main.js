@@ -43,6 +43,7 @@ import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';
 import Knob from 'primevue/knob';
 import Listbox from 'primevue/listbox';
+import Loading from '@/components/Loading';
 import MegaMenu from 'primevue/megamenu';
 import Menu from 'primevue/menu';
 import MainMenu from './pages/MainMenu';
@@ -113,8 +114,8 @@ const app = createApp({
 					return Login;
 				case '/error':
 					return Error;
-				case '/access':
-					return Access;
+				case '/loading':
+					return Loading;
 				case '/notfound':
 					return NotFound;
 				default:
@@ -175,6 +176,7 @@ app.component('InputSwitch', InputSwitch);
 app.component('InputText', InputText);
 app.component('Knob', Knob);
 app.component('Listbox', Listbox);
+app.component('Loading', Loading);
 app.component('MegaMenu', MegaMenu);
 app.component('Menu', Menu);
 app.component('MainMenu', MainMenu);
@@ -233,8 +235,7 @@ function createNewStore() {
 				sTeams: [],
 				sPlayers: [],
 				sUser: {},
-				sWorld: {},
-				sDb: null
+				sWorld: {}
 			}
 		},
 		mutations: {
@@ -261,9 +262,6 @@ function createNewStore() {
 			},
 			updateWorld(state, payload) {
 				state.sWorld = payload
-			},
-			updateDb(state, payload) {
-				state.sDB = payload
 			}
 		}
 	})

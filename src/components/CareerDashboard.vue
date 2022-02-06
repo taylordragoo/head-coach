@@ -4,17 +4,21 @@
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-1">
                     <span class="overview-icon">
-                        <i class="pi pi-shopping-cart"></i>
+                        <i class="pi pi-calendar-times"></i>
                     </span>
-                    <span class="overview-title">Players</span>
+                    <span class="overview-title">Season Status: {{ world.phase }}</span>
                     <div class="grid overview-detail">
-                        <div class="col-6">
-                            <div class="overview-number" type='text' >640</div>
-                            <div class="overview-subtext">Pending</div>
+                        <div class="col-4">
+<!--                            <div class="overview-number" type='text'>{{ this.$moment([world.year, world.month, world.day]) }}</div>-->
+                            <div class="overview-subtext">Month</div>
                         </div>
-                        <div class="col-6">
-                            <div class="overview-number">1420</div>
-                            <div class="overview-subtext">Completed</div>
+                        <div class="col-4">
+                            <div class="overview-number">{{ world.day }}</div>
+                            <div class="overview-subtext">Day</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="overview-number">{{ world.year }}</div>
+                            <div class="overview-subtext">Year</div>
                         </div>
                     </div>
                 </div>
@@ -73,275 +77,53 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-12 xl:col-6">
-                <div class="card grid-nogutter orders">
-                    <div class="card-header">
-                        <h4>Orders</h4>
-                        <Menu id="orders-button" :popup="true" :model="items" ref="menu" appendTo="body"></Menu>
-                        <Button icon="pi pi-search" class="p-button-text p-button-secondary" @click="menuToggle($event)" aria-controls="orders-button" aria-haspopup="true"></Button>
-                    </div>
-
-                    <div class="grid">
-                        <div class="col-12">
-                            <div id="order-tabs-container" class="grid order-tabs">
-                                <div class="order-tab order-tab-new col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
-                                     data-label="New Orders" data-index="0" data-stroke="#BBDEFB" data-fill="rgba(100, 181, 246, 0.2)" >
-                                    <i class="pi pi-plus-circle"></i>
-                                    <span class="order-label">New</span>
-                                    <i class="stat-detail-icon icon-arrow-right-circle"></i>
-                                    <img src="demo/images/dashboard/graph-new.svg" alt="diamond-vue" />
-                                </div>
-                                <div class="order-tab order-tab-completed col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
-                                     data-label="Completed Orders" data-index="1" data-stroke="#C5CAE9" data-fill="rgba(121, 134, 203, 0.2)">
-                                    <i class="pi pi-check-circle"></i>
-                                    <span class="order-label">Completed</span>
-                                    <i class="stat-detail-icon icon-arrow-right-circle"></i>
-                                    <img src="demo/images/dashboard/graph-completed.svg" alt="diamond-vue" />
-                                </div>
-                                <div class="order-tab order-tab-refunded col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
-                                     data-label="Refunded Orders" data-index="2" data-stroke="#B2DFDB" data-fill="rgba(224, 242, 241, 0.5)">
-                                    <i class="pi pi-refresh"></i>
-                                    <span class="order-label">Refunded</span>
-                                    <i class="stat-detail-icon icon-arrow-right-circle"></i>
-                                    <img src="demo/images/dashboard/graph-refunded.svg" alt="diamond-vue" />
-                                </div>
-                                <div class="order-tab order-tab-cancelled col-6 md:col-3" @click="changeDataset($event);  refreshDataset($event);"
-                                     data-label="Cancelled Orders" data-index="3" data-stroke="#B2EBF2" data-fill="rgba(224, 247, 250, 0.5)">
-                                    <i class="pi pi-times-circle"></i>
-                                    <span class="order-label">Cancelled</span>
-                                    <i class="stat-detail-icon icon-arrow-right-circle"></i>
-                                    <img src="demo/images/dashboard/graph-cancelled.svg" alt="diamond-vue" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="overview-chart">
-                                <Chart ref="chart" type="line" :data="ordersChart" :options="ordersChartOptions" id="order-chart"></Chart>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 xl:col-6">
+            <div class="col-12 xl:col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Recent Sales</h4>
+                        <h4>Players</h4>
                         <Dropdown :options="orderWeek" v-model="selectedOrderWeek" optionLabel="name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
                     </div>
 
                     <p>Your sales activity over time.</p>
 
-                    <DataTable :value="products" :paginator="true" :rows="5" responsiveLayout="scroll">
-                        <Column field="id" header="ID" :sortable="true">
+                    <DataTable :value="players" :paginator="true" :rows="20" responsiveLayout="scroll">
+                        <Column field="firstName" header="First Name" :sortable="true">
                             <template #body="slotProps">
-                                <span class="p-column-title">Id</span>
-                                {{slotProps.data.id}}
+                                <span class="p-column-title">First Name</span>
+                                {{ slotProps.data.firstName }}
                             </template>
                         </Column>
-                        <Column field="category" header="Category" :sortable="true">
+                        <Column field="lastName" header="Last Name" :sortable="true">
                             <template #body="slotProps">
-                                <span class="p-column-title">Category</span>
-                                {{slotProps.data.category}}
+                                <span class="p-column-title">Last Name</span>
+                                {{ slotProps.data.lastName }}
                             </template>
                         </Column>
-                        <Column field="price" header="Price" :sortable="true">
+                        <Column field="position" header="Position" :sortable="true">
                             <template #body="slotProps">
-                                <span class="p-column-title">Price</span>
-                                {{ formatCurrency(slotProps.data.price) }}
+                                <span class="p-column-title">Position</span>
+                                {{ slotProps.data.pos }}
                             </template>
                         </Column>
-                        <Column field="inventoryStatus" header="Status" :sortable="true">
+                        <Column field="height" header="Height" :sortable="true">
                             <template #body="slotProps">
-                                <span :class="'product-badge status-' + slotProps.data.inventoryStatus.toLowerCase()">{{ slotProps.data.inventoryStatus }}</span>
+                                <span class="p-column-title">Height</span>
+                                {{ slotProps.data.height }}
                             </template>
                         </Column>
-                        <Column bodyStyle="text-align: center">
-                            <template #body> <Button type="button" icon="pi pi-search"></Button></template
-                            ></Column>
+                        <Column field="weight" header="Weight" :sortable="true">
+                            <template #body="slotProps">
+                                <span class="p-column-title">Weight</span>
+                                {{ slotProps.data.weight }}
+                            </template>
+                        </Column>
+                        <Column field="weight" header="Weight" :sortable="true">
+                            <template #body="slotProps">
+                                <span class="p-column-title">Weight</span>
+                                {{ slotProps.data.weight }}
+                            </template>
+                        </Column>
                     </DataTable>
-                </div>
-            </div>
-
-            <div class="col-12 lg:col-4">
-                <div class="card widget-tasks">
-                    <h4>Tasks</h4>
-                    <p>Overview of your pending tasks.</p>
-                    <div>
-                        <div class="task task-1">
-                            <div class="task-name"><span>12 Orders</span> to fulfill</div>
-                            <div class="task-progress">
-                                <div></div>
-                            </div>
-                        </div>
-                        <div class="task task-2">
-                            <div class="task-name"><span>40+ Payments</span> to withdraw</div>
-                            <div class="task-progress">
-                                <div></div>
-                            </div>
-                        </div>
-                        <div class="task task-3">
-                            <div class="task-name"><span>4 Reports</span> to revise</div>
-                            <div class="task-progress">
-                                <div></div>
-                            </div>
-                        </div>
-                        <div class="task task-4">
-                            <div class="task-name"><span>6 Questions</span> to respond</div>
-                            <div class="task-progress">
-                                <div></div>
-                            </div>
-                        </div>
-                        <div class="task task-5">
-                            <div class="task-name"><span>2 Chargebacks</span> to review</div>
-                            <div class="task-progress">
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h4>Best Sellers</h4>
-                    <p>Most popular products from your collection.</p>
-
-                    <ul class="widget-image-list">
-                        <li>
-                            <span>Product</span>
-                            <span>Sales</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/bamboo-watch.jpg" alt="diamond-layout" />
-                                <span>Bamboo Watch</span>
-                            </span>
-                            <span class="listitem-value">82</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/blue-band.jpg" alt="diamond-layout" />
-                                <span>Blue Band</span>
-                            </span>
-                            <span class="listitem-value">75</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/game-controller.jpg" alt="diamond-layout" />
-                                <span>Game Controller</span>
-                            </span>
-                            <span class="listitem-value">64</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/lime-band.jpg" alt="diamond-layout" />
-                                <span>Lime Band</span>
-                            </span>
-                            <span class="listitem-value">62</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/gold-phone-case.jpg" alt="diamond-layout" />
-                                <span>Phone Case</span>
-                            </span>
-                            <span class="listitem-value">55</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/green-t-shirt.jpg" alt="diamond-layout" />
-                                <span>Green T-Shirt</span>
-                            </span>
-                            <span class="listitem-value">48</span>
-                        </li>
-                        <li>
-                            <span>
-                                <img src="demo/images/product/purple-t-shirt.jpg" alt="diamond-layout" />
-                                <span>Purple T-Shirt</span>
-                            </span>
-                            <span class="listitem-value">32</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-12 lg:col-8">
-                <div class="card revenue">
-                    <h4>Revenue Stream</h4>
-                    <p>Comparison of your revenue sources.</p>
-                    <div class="revenue-chart-container flex flex-column align-items-center">
-                        <Chart type="pie" id="revenue-chart" :data="revenueChart" style="width: 50%"></Chart>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h4>Team Members</h4>
-                    <ul class="widget-person-list">
-                        <li>
-                            <div class="person-item">
-                                <img src="demo/images/avatar/amyelsner.png" alt="diamond-layout" />
-                                <div class="person-info">
-                                    <div class="person-name">Amy Elsner</div>
-                                    <div class="person-subtext">Accounting</div>
-                                </div>
-                            </div>
-                            <div class="person-actions">
-                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
-                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="person-item">
-                                <img src="demo/images/avatar/annafali.png" alt="diamond-layout" />
-                                <div class="person-info">
-                                    <div class="person-name">Anna Fali</div>
-                                    <div class="person-subtext">Procurement</div>
-                                </div>
-                            </div>
-                            <div class="person-actions">
-                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
-                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="person-item">
-                                <img src="demo/images/avatar/bernardodominic.png" alt="diamond-layout" />
-                                <div class="person-info">
-                                    <div class="person-name">Bernardo Dominic</div>
-                                    <div class="person-subtext">Finance</div>
-                                </div>
-                            </div>
-                            <div class="person-actions">
-                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
-                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="person-item">
-                                <img src="demo/images/avatar/ivanmagalhaes.png" alt="diamond-layout" />
-                                <div class="person-info">
-                                    <div class="person-name">Ivan Magalhaes</div>
-                                    <div class="person-subtext">Sales</div>
-                                </div>
-                            </div>
-                            <div class="person-actions">
-                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
-                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="person-item">
-                                <img src="demo/images/avatar/xuxuefeng.png" alt="diamond-layout" />
-                                <div class="person-info">
-                                    <div class="person-name">Xuxue Feng</div>
-                                    <div class="person-subtext">Management</div>
-                                </div>
-                            </div>
-                            <div class="person-actions">
-                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
-                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -349,7 +131,6 @@
 </template>
 
 <script>
-import ProductService from '../service/ProductService';
 export default {
     data() {
         return {
@@ -421,14 +202,50 @@ export default {
         };
     },
     created() {
-        this.productService = new ProductService();
     },
     mounted() {
-        this.productService.getProducts().then((data) => (this.products = data));
-        this.productService.getProducts().then((data) => (this.productsThisWeek = data));
-        this.productService.getProductsMixed().then((data) => (this.productsLastWeek = data));
-
-        this.selectedOrderWeek = this.orderWeek[0];
+    },
+    computed: {
+        players: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sPlayers
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updatePlayers', value)
+            }
+        },
+        teams: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sTeams
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateTeams', value)
+            }
+        },
+        user: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sUser
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateUser', value)
+            }
+        },
+        world: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sWorld
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateWorld', value)
+            }
+        }
     },
     methods: {
         changeDataset(event) {

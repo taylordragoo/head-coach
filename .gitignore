@@ -17,3 +17,4 @@ package-lock.json
 /public/theme/**/theme-*.css
 /public/theme/**/theme-*.map
 /src/assets/sass/theme/designer
+/.env

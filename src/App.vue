@@ -54,7 +54,7 @@ export default {
             configClick: false,
             menu: [
                 {
-                    label: "Personal",
+                    label: "Coach",
                     icon: "pi pi-fw pi-home",
                     items: [
                         {label: "Home", icon: "pi pi-fw pi-home", to: "/dashboard"},
@@ -66,11 +66,11 @@ export default {
                 {
                     label: "Team", icon: "pi pi-fw pi-star-fill",
                     items: [
-                        {label: "Form Layout", icon: "pi pi-fw pi-id-card", to: "/formlayout"},
-                        {label: "Input", icon: "pi pi-fw pi-check-square", to: "/input"},
-                        // {label: "Float Label", icon: "pi pi-fw pi-bookmark", to: "/floatlabel"},
-                        // {label: "Invalid State", icon: "pi pi-fw pi-exclamation-circle", to: "/invalidstate"},
-                        {label: "Button", icon: "pi pi-fw pi-mobile", to: "/button", class: 'rotated-icon'},
+                        {label: "Roster", icon: "pi pi-fw pi-id-card", to: "/formlayout"},
+                        {label: "Depth Chart", icon: "pi pi-fw pi-check-square", to: "/formlayout"},
+                        {label: "Dynamics", icon: "pi pi-fw pi-bookmark", to: "/formlayout"},
+                        {label: "Gameplan", icon: "pi pi-fw pi-exclamation-circle", to: "/formlayout"},
+                        {label: "Staff", icon: "pi pi-fw pi-mobile", to: "/formlayout", class: 'rotated-icon'},
                         // {label: "Table", icon: "pi pi-fw pi-table", to: "/table"},
                         // {label: "List", icon: "pi pi-fw pi-list", to: "/list"},
                         // {label: "Tree", icon: "pi pi-fw pi-share-alt", to: "/tree"},
@@ -84,36 +84,36 @@ export default {
                         // {label: "Misc", icon: "pi pi-fw pi-circle-off", to: "/misc"},
                     ],
                 },
-                { separator: true },
-                {
-                    label: "Staff", icon: "pi pi-fw pi-compass",
-                    items: [
-                        // {label: "Display", icon:"pi pi-fw pi-desktop", to:"/display"},
-                        // {label: "Elevation", icon:"pi pi-fw pi-external-link", to:"/elevation"},
-                        {label: "Flexbox", icon:"pi pi-fw pi-directions", to:"/flexbox"},
-                        {label: "Icons", icon:"pi pi-fw pi-prime", to:"/icons"},
-                        // {label: "Text", icon:"pi pi-fw pi-pencil", to:"/text"},
-                        // {label: "Widgets", icon:"pi pi-fw pi-star", to:"/widgets"},
-                        // {label: "Grid System", icon:"pi pi-fw pi-th-large", to:"/grid"},
-                        // {label: "Spacing", icon:"pi pi-fw pi-arrow-right", to:"/spacing"},
-                        // {label: "Typography", icon:"pi pi-fw pi-align-center", to:"/typography"},
-                    ],
-                },
+                // { separator: true },
+                // {
+                //     label: "Staff", icon: "pi pi-fw pi-compass",
+                //     items: [
+                //         // {label: "Display", icon:"pi pi-fw pi-desktop", to:"/display"},
+                //         // {label: "Elevation", icon:"pi pi-fw pi-external-link", to:"/elevation"},
+                //         {label: "Flexbox", icon:"pi pi-fw pi-directions", to:"/flexbox"},
+                //         {label: "Icons", icon:"pi pi-fw pi-prime", to:"/icons"},
+                //         // {label: "Text", icon:"pi pi-fw pi-pencil", to:"/text"},
+                //         // {label: "Widgets", icon:"pi pi-fw pi-star", to:"/widgets"},
+                //         // {label: "Grid System", icon:"pi pi-fw pi-th-large", to:"/grid"},
+                //         // {label: "Spacing", icon:"pi pi-fw pi-arrow-right", to:"/spacing"},
+                //         // {label: "Typography", icon:"pi pi-fw pi-align-center", to:"/typography"},
+                //     ],
+                // },
                 { separator: true },
                 {
                     label: "Training & Medical", icon: "pi pi-building",
                     items: [
-                        {label: "Free Blocks", icon: "pi pi-fw pi-eye", to: "/blocks", badge: "NEW"},
-                        {label: "All Blocks", icon: "pi pi-fw pi-globe", url: "https://www.primefaces.org/primeblocks-vue"}
+                        {label: "Training Schedule", icon: "pi pi-fw pi-eye", to: "/formlayout"},
+                        {label: "Injuries", icon: "pi pi-fw pi-globe", to: "/ormlayout"}
                     ]
                 },
                 { separator: true },
                 {
                     label: "Franchise", icon: "pi pi-fw pi-briefcase",
                     items: [
-                        {label: "Crud", icon: "pi pi-fw pi-pencil", to: "/crud"},
-                        {label: "Calendar", icon: "pi pi-fw pi-calendar-plus", to: "/calendar"},
-                        {label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/timeline'},
+                        {label: "Overview", icon: "pi pi-fw pi-pencil", to: "/formlayout"},
+                        {label: "Finances", icon: "pi pi-fw pi-calendar-plus", to: "/formlayout"},
+                        {label: 'Facilities', icon: 'pi pi-fw pi-calendar', to: '/formlayout'},
                         // {label: "Landing", icon: "pi pi-fw pi-user-plus", url: "pages/landing.html", target: "_blank"},
                         // {label: "Login", icon: "pi pi-fw pi-sign-in", to: "/login"},
                         // {label: "Invoice", icon: "pi pi-fw pi-dollar", to: "/invoice"},
@@ -121,7 +121,7 @@ export default {
                         // {label: "Error", icon: "pi pi-fw pi-times-circle", to: "/error"},
                         // {label: "Not Found", icon: "pi pi-fw pi-exclamation-circle", to: "/notfound"},
                         // {label: "Access Denied", icon: "pi pi-fw pi-lock", to: "/access"},
-                        {label: "Empty", icon: "pi pi-fw pi-circle-off", to: "/empty"}
+                        // {label: "Team", icon: "pi pi-fw pi-circle-off", to: "/empty"}
                     ],
                 },
                 // { separator: true },
@@ -169,10 +169,10 @@ export default {
                 // },
                 { separator: true },
                 {
-                    label: "Youth Development", icon: "pi pi-fw pi-download",
+                    label: "Scouting", icon: "pi pi-fw pi-download",
                     items: [
-                        {label: "Buy Now", icon: "pi pi-fw pi-shopping-cart", command: () => window.open("https://www.primefaces.org/store", "_blank")},
-                        {label: "Documentation", icon: "pi pi-fw pi-info-circle", to: "/documentation"},
+                        {label: "Scout Players", icon: "pi pi-fw pi-shopping-cart", to: "/formlayout"},
+                        {label: "Draft Board", icon: "pi pi-fw pi-info-circle", to: "/documentation"},
                     ],
                 },
             ],

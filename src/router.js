@@ -322,6 +322,11 @@ const routes = [
         name: 'blocks',
         component: () => import('./components/BlocksDemo.vue')
     },
+    {
+        path: '/loading',
+        name: 'loading',
+        component: () => import('./components/Loading.vue')
+    },
 ];
 
 const router = createRouter({

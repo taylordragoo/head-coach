@@ -21,15 +21,15 @@ export const PHASE = {
 };
 
 export const PHASE_TEXT = {
-    "0": "Preseason",
-    "1": "Regular Season",
-    "2": "Post-Trade Deadline",
-    "3": "Playoffs",
-    "4": "Before Draft",
-    "5": "Draft",
-    "6": "After Draft",
-    "7": "Re-sign Players",
-    "8": "Free Agency",
+    0: "Preseason",
+    1: "Regular Season",
+    2: "Post-Trade Deadline",
+    3: "Playoffs",
+    4: "Before Draft",
+    5: "Draft",
+    6: "After Draft",
+    7: "Re-sign Players",
+    8: "Free Agency",
 };
 
 export const PLAYER_STATE = {
@@ -786,9 +786,12 @@ export const COMPOSITE_WEIGHTS = {
 
 export const DEFAULT_ATTRIBUTES = {
     phase: 1,
-    day: 1,
+    year: 2022,
     month: 7,
-    year: 2021,
+    day: 1,
+    hour: 8,
+    minute: 0,
+    second: 0,
     confs: DEFAULT_CONFS,
     divs: DEFAULT_DIVS,
     lid: 1,

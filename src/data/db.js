@@ -26,17 +26,19 @@ import {
 import { universities } from "./colleges";
 import { date, random, datatype, internet, company, commerce, address, name, image, providers } from 'faker';
 import _ from 'lodash';
-
-// export const db = new Dexie("Brian Davis");
+import moment from 'moment'
 
 export function InitNewCareer(dbName, player) {
+
     const db = new Dexie(dbName);
     try {
+
         db.version(1).stores({
             user: "++uid, first, last, age, exp, ptid",
             teams: "++tid, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
             players: "++pid, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
-            world: '++wid, phase, day, month, year, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid'
+            world: '++wid, phase, year, month, day, hour, minute, second, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
+            phase: '++id, phase',
         });
 
         db.user.add({
@@ -45,15 +47,21 @@ export function InitNewCareer(dbName, player) {
             age: player._age,
             exp: player._exp,
             ptid: 0
-        });
+        })
 
         db.world.add(DEFAULT_ATTRIBUTES);
+
+        db.phase.add(PHASE_TEXT)
+
         CreateTeams(db)
 
     } catch (error) {
         console.log(error);
     } finally {
-        console.log("Game Initted")
+        console.log("Game Init")
+        // let now = new Date();
+        let day = moment().dayOfYear(1)
+        console.log('Day of year: ' + moment().local(day));
     }
 }
 
@@ -123,7 +131,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -192,7 +200,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -261,7 +269,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -330,7 +338,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -399,7 +407,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -468,7 +476,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -537,7 +545,7 @@ function CreateTeams(database) {
                     P: CreatePlayers(database, 'P', 1, teamCount + 1),
                 }
             }
-            console.log(team)
+            // console.log(team)
             database.teams.add(team);
             teamCount++;
         })
@@ -622,30 +630,6 @@ function CreatePlayers(database, position, amount, tid) {
     new Array(size).fill().forEach(() => {
         let player = {
             pos: pos,
-            // pos: _.sample([
-            //     "QB",
-            //     "RB",
-            //     "FB",
-            //     "WR",
-            //     "TE",
-            //     "LT",
-            //     "LG",
-            //     "C",
-            //     "RG",
-            //     "RT",
-            //     "DT",
-            //     "LE",
-            //     "RE",
-            //     "OLB",
-            //     "MLB",
-            //     "CB",
-            //     "FS",
-            //     "SS",
-            //     "K",
-            //     "P",
-            //     "KR",
-            //     "PR",
-            // ]),
             college: _.sample(universities),
             born: {
                 year: _.random(1981, 2000),
@@ -664,33 +648,33 @@ function CreatePlayers(database, position, amount, tid) {
                 pot: _.random(50,100),
                 ovr: _.random(50,80)
             },
-            ratings: [
-                {
-                    hgt: _.random(50,100),
-                    str: _.random(50,100),
-                    spd: _.random(50,100),
-                    jmp: _.random(50,100),
-                    endu: _.random(50,100),
-                    ins: _.random(50,100),
-                    dnk: _.random(50,100),
-                    ft: _.random(50,100),
-                    fg: _.random(50,100),
-                    tp: _.random(50,100),
-                    diq: _.random(50,100),
-                    oiq: _.random(50,100),
-                    drb: _.random(50,100),
-                    pss: _.random(50,100),
-                    reb: _.random(50,100),
+            ratings: {
+                    strength: _.random(1,20),
+                    speed: _.random(1,20),
+                    agility: _.random(1,20),
+                    injury: _.random(1,20),
+                    stamina: _.random(1,20),
+                    awareness: _.random(1,20),
+                    acceleration: _.random(1,20),
+                    carry: _.random(1,20),
+                    catch: _.random(1,20),
+                    thpow: _.random(1,20),
+                    thacc: _.random(1,20),
+                    pblock: _.random(1,20),
+                    rblock: _.random(1,20),
+                    tackle: _.random(1,20),
+                    btackle: _.random(1,20),
+                    kpow: _.random(1,20),
+                    kacc: _.random(1,20),
                     season: 2021,
-                    pos: "QB",
+                    pos: pos,
                     fuzz: 1.163364711073866,
                     skills: [
                         "3"
                     ],
                     ovr: 40,
                     pot: 55
-                }
-            ],
+            },
             firstName: name.firstName(),
             lastName: name.lastName()
         }

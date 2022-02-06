@@ -5,9 +5,9 @@
                 <div class="row"></div>
                 <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
                     <div class="mb-3 font-bold text-2xl">
-                        <h1>Head Coach 2022</h1>
-                        <span class="text-900">One Coach, </span>
-                        <span class="text-blue-600">Many Teams</span>
+<!--                        <h1>Head Coach 2022</h1>-->
+<!--                        <span class="text-900">One Coach, </span>-->
+<!--                        <span class="text-blue-600">Many Teams</span>-->
                     </div>
                     <div class="text-700 text-sm mb-6">Ac turpis egestas maecenas pharetra convallis posuere morbi leo urna.</div>
                     <div class="grid">
@@ -117,12 +117,12 @@
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="continueDialog" :style="{width: '800px'}" header="Continue previous save..." :modal="true" class="p-fluid">
+        <Dialog v-model:visible="continueDialog" :style="{width: '800px'}" header="Continue previous save..." :modal="true" class="p-fluid bg-white">
             <div class="row">
                 <div class="col-md-2">
                 </div>
                 <div class="col-md-1" v-for='save in existing_db_names'>
-                    <div class="card p-fluid">
+                    <div class="p-fluid">
                         <h5>{{ save }}</h5>
                         <div class="field grid">
                             <label class="col-12 mb-2 md:col-2 md:mb-0">Week</label>
@@ -148,18 +148,32 @@
                 </div>
             </div>
         </Dialog>
+
+        <Dialog v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="card justify-content-center">
+                <h5>Loading...</h5>
+                <div class="grid">
+                    <div class="col">
+                        <ProgressBar :value="value" :showValue="false"></ProgressBar>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
     </div>
 </template>
 
 <script>
 import { Dexie } from 'dexie';
+import { download } from 'downloadjs';
 import { InitNewCareer } from "@/data/db";
+import {importDB, exportDB, importInto, peakImportFile} from "dexie-export-import";
 
 export default {
     data() {
         return {
             coachDialog: false,
             continueDialog: false,
+            loadingDialog: false,
             coach: {},
             existing_db_names: [],
             statuses: [
@@ -281,7 +295,7 @@ export default {
                 _first: obj.firstName,
                 _last: obj.lastName,
                 _age: obj.age,
-                _exp: obj.exp
+                _exp: obj.coach.exp.label
             }
 
             if(databases.length < 3) {
@@ -301,17 +315,17 @@ export default {
             let obj = this
             obj.existing_db_names = []
             this.openContinue()
-            console.log("Dumping Databases");
-            console.log("=================");
+            // console.log("Dumping Databases");
+            // console.log("=================");
             await Dexie.getDatabaseNames(function (databaseNames) {
                 if (databaseNames.length === 0) {
                     // No databases at this origin as we know of.
-                    console.log("Could not find databases on current origin.");
-                    console.log("Was your database created without using Dexie? Try the [Add database] button above!");
+                    // console.log("Could not find databases on current origin.");
+                    // console.log("Was your database created without using Dexie? Try the [Add database] button above!");
                 } else {
                     // At least one database to dump
                     dump(databaseNames);
-                    console.log("Dumping data...");
+                    // console.log("Dumping data...");
                 }
 
                 function dump(databaseNames) {
@@ -319,27 +333,27 @@ export default {
                         obj.data = new Dexie(databaseNames[0]);
                         // Now, open database without specifying any version. This will make the database open any existing database and read its schema automatically.
                         obj.data.open().then(function () {
-                            console.log("var db = new Dexie('" + obj.data.name + "');");
+                            // console.log("var db = new Dexie('" + obj.data.name + "');");
                             obj.existing_db_names.push(obj.data.name)
-                            console.log("db.version(" + obj.data.verno + ").stores({");
+                            // console.log("db.version(" + obj.data.verno + ").stores({");
                             obj.data.tables.forEach(function (table, i) {
                                 var primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
                                 var schemaSyntax = primKeyAndIndexes.map(function (index) { return index.src; }).join(',');
-                                console.log("    " + table.name + ": " + "'" + schemaSyntax + "'" + (i < obj.data.tables.length - 1 ? "," : ""));
+                                // console.log("    " + table.name + ": " + "'" + schemaSyntax + "'" + (i < obj.data.tables.length - 1 ? "," : ""));
                                 // Note: We could also dump the objects here if we'd like to:
                                  table.each(function (object) {
-                                     console.log(JSON.stringify(object));
+                                     // console.log(JSON.stringify(object));
                                  });
                             });
-                            console.log("});\n");
+                            // console.log("});\n");
                         }).finally(function () {
                             // obj.data.close();
                             dump(databaseNames.slice(1));
                         });;
                     } else {
-                        console.log("Finished dumping databases");
-                        console.log("==========================");
-                        console.log("Hint: Is your DB not listed? Try using the [Add database] button above!");
+                        // console.log("Finished dumping databases");
+                        // console.log("==========================");
+                        // console.log("Hint: Is your DB not listed? Try using the [Add database] button above!");
                     }
                 }
             });
@@ -347,24 +361,36 @@ export default {
         async loadSelectedCareer(name) {
             let obj = this
             let db_name = name;
-            console.log(db_name)
+            console.log("DB: " + db_name)
             const db = new Dexie(db_name);
             if (!(await Dexie.exists(db.name))) {
                 console.log("Db does not exist");
                 db.version(1).stores({});
             }
             await db.open()
+            console.log("Loaded: " + db.name);
 
-            this.teams = await db.table('teams').toArray();
-            this.players = await db.table('players').toArray();
-            this.user = await db.table('user').toArray();
-            this.user = this.user[0];
-            this.firstName = this.user.first;
-            this.lastName = this.user.last;
-            this.age = this.user.age;
-            this.exp = this.user.exp;
-            this.world = await db.table('world').toArray();
-            this.world = this.world[0]
+            obj.teams = await db.table('teams').toArray();
+            // console.log(obj.teams)
+            obj.players = await db.table('players').toArray();
+            // console.log(obj.players)
+            obj.user = await db.table('user').toArray();
+            // console.log(obj.user)
+            obj.world = await db.table('world').toArray();
+            // console.log(obj.world)
+
+            obj.user = obj.user[0];
+            obj.firstName = obj.user.first;
+            obj.lastName = obj.user.last;
+            obj.world = obj.world[0];
+
+            try {
+                const blob = await exportDB(db);
+                download(blob, "dexie-export.json", "application/json");
+                console.log('Success');
+            } catch (error) {
+                console.error(''+error);
+            }
 
             console.log("Could open DB")
             obj.$router.push('dashboard')
