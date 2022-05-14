@@ -1,4 +1,5 @@
 import { createApp, h } from 'vue';
+import moment from 'moment'
 import router from './router';
 import App from './App.vue';
 import PrimeVue from 'primevue/config';
@@ -131,6 +132,8 @@ app.use(ConfirmationService);
 app.use(ToastService);
 app.use(router);
 
+app.moment = moment
+
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 app.directive('code', CodeHighlight);
@@ -222,6 +225,19 @@ app.component('TriStateCheckbox', TriStateCheckbox);
 
 app.component('BlockViewer', BlockViewer);
 
+function getDefaultState () {
+	return {
+		sFirstName: '',
+		sLastName: '',
+		sAge: null,
+		sExperience: null,
+		sTeams: [],
+		sPlayers: [],
+		sUser: {},
+		sWorld: {}
+	}
+}
+
 // eslint-disable-next-line no-unused-vars
 function createNewStore() {
 	// eslint-disable-next-line no-unused-vars
@@ -238,7 +254,15 @@ function createNewStore() {
 				sWorld: {}
 			}
 		},
+		actions: {
+			resetState({ commit }) {
+				commit('RESET_STATE')
+			}
+		},
 		mutations: {
+			RESET_STATE(state) {
+				Object.assign(state, getDefaultState())
+			},
 			updateFirstName(state, payload) {
 				state.sFirstName = payload
 			},

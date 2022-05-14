@@ -18,3 +18,6 @@ package-lock.json
 /public/theme/**/theme-*.map
 /src/assets/sass/theme/designer
 /.env
+
+#Electron-builder output
+/dist_electron

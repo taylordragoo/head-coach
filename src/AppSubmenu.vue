@@ -2,8 +2,7 @@
     <ul v-if="items" class="layout-menu" role="menu">
         <template v-for="(item, i) of items">
             <li v-if="visible(item) && !item.separator" :key="item.label || i" :class="[{'layout-root-menuitem': root, 'active-menuitem': activeIndex === i && !item.disabled}]" role="menuitem">
-                <router-link v-if="item.to" :to="item.to" :style="item.style" :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]" active-class="active-route" :target="item.target"
-                    exact @click="onMenuItemClick($event, item, i)" @mouseenter="onMenuItemMouseEnter(i)" v-ripple>
+                <router-link v-if="item.to" :to="item.to" :style="item.style" :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]" active-class="active-route" :target="item.target" exact @click="onMenuItemClick($event, item, i)" @mouseenter="onMenuItemMouseEnter(i)" v-ripple>
                     <i :class="['layout-menuitem-icon', item.icon]"></i>
                     <span class="layout-menuitem-text">{{ item.label }}</span>
                     <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>

@@ -22,11 +22,13 @@
 
         <div class="topbar-right">
             <ul class="topbar-menu">
+
                 <li class="search-item">
                     <a tabindex="0" @click="onSearchClick">
                         <i class="pi pi-search"></i>
                     </a>
                 </li>
+
                 <li class="notifications-item" :class="{ 'active-menuitem ': topbarNotificationMenuActive }">
                     <a href="#" tabindex="0" @click="onTopbarNotificationMenuButtonClick">
                         <i class="pi pi-bell"></i>
@@ -81,17 +83,11 @@
                     </ul>
                 </li>
 
-                <li class="notifications-item" :class="{ 'active-menuitem ': topbarNotificationMenuActive }">
+                <li class="notifications-item" :class="{ 'active-menuitem ': topbarSecondNotificationMenuActive }">
                     <a href="#" tabindex="0" @click="onTopbarNotificationMenuButtonClick">
                         <i class="pi pi-globe"></i>
                     </a>
-                </li>
-
-                <li class="profile-item" :class="{ 'active-menuitem fadeInDown': topbarUserMenuActive }">
-                    <a href="#" @click="onTopbarUserMenuButtonClick">
-                        <span class="profile-name">{{ this.$store.state.sFirstName + ' ' + this.$store.state.sLastName }}</span>
-                    </a>
-                    <ul class="profile-menu fade-in-up">
+                    <ul class="notifications-menu fade-in-up">
                         <li>
                             <a href="#">
                                 <i class="pi pi-user"></i>
@@ -124,19 +120,29 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="profile-item" :class="{ 'active-menuitem fadeInDown': topbarContMenuActive }">
+                    <a @click="onTopbarContMenuButtonClick">
+                        <span class="profile-name">Continue</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>
 </template>
 
 <script>
+import moment from 'moment';
 import AppMenu from "./AppMenu";
 export default {
     name: "AppTopbar",
-    emits: ["menu-click", "menuitem-click", "root-menuitem-click", "menu-button-click", "search-click", "topbar-notification", "topbar-user-menu", "right-menubutton-click"],
+    emits: ["menu-click", "menuitem-click", "root-menuitem-click", "menu-button-click", "search-click", "topbar-notification", "topbar-second-notification", "topbar-user-menu", "topbar-cont-menu", "right-menubutton-click"],
     props: {
         topbarNotificationMenuActive: Boolean,
+        topbarSecondNotificationMenuActive: Boolean,
         topbarUserMenuActive: Boolean,
+        topbarContMenuActive: Boolean,
         layoutMode: String,
         menu: Array,
         menuActive: Boolean,
@@ -156,6 +162,17 @@ export default {
         }
     },
     methods: {
+        getHumanDate: function(date) {
+            return moment(date).format('MM/DD/YYYY');
+        },
+        getTomorrow: function(date) {
+            let obj = this
+            return moment(obj.getHumanDate(date)).add(1,'days');
+        },
+        continueToTomorrow: function(date) {
+            let obj = this
+            obj.world.date = obj.getTomorrow(date)
+        },
         onMenuClick(event) {
             this.$emit("menu-click", event);
         },
@@ -174,8 +191,15 @@ export default {
         onTopbarNotificationMenuButtonClick(event) {
             this.$emit("topbar-notification", event);
         },
+        onTopbarSecondNotificationMenuButtonClick(event) {
+            this.$emit("topbar-second-notification", event);
+        },
         onTopbarUserMenuButtonClick(event) {
             this.$emit("topbar-user-menu", event);
+        },
+        onTopbarContMenuButtonClick(event) {
+            let obj = this
+            obj.continueToTomorrow(obj.world.date)
         },
         onRightMenuClick(event) {
             this.$emit("right-menubutton-click", event);
@@ -183,6 +207,48 @@ export default {
         isMobile() {
             return window.innerWidth <= 1091;
         }
-    }
+    },
+    computed: {
+        players: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sPlayers
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updatePlayers', value)
+            }
+        },
+        teams: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sTeams
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateTeams', value)
+            }
+        },
+        user: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sUser
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateUser', value)
+            }
+        },
+        world: {
+            /* By default get() is used */
+            get() {
+                return this.$store.state.sWorld
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateWorld', value)
+            }
+        },
+    },
 };
 </script>

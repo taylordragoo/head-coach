@@ -6,32 +6,10 @@
                     <span class="overview-icon">
                         <i class="pi pi-calendar-times"></i>
                     </span>
-                    <span class="overview-title">Season Status: {{ world.phase }}</span>
-                    <div class="grid overview-detail">
-                        <div class="col-4">
-<!--                            <div class="overview-number" type='text'>{{ this.$moment([world.year, world.month, world.day]) }}</div>-->
-                            <div class="overview-subtext">Month</div>
-                        </div>
-                        <div class="col-4">
-                            <div class="overview-number">{{ world.day }}</div>
-                            <div class="overview-subtext">Day</div>
-                        </div>
-                        <div class="col-4">
-                            <div class="overview-number">{{ world.year }}</div>
-                            <div class="overview-subtext">Year</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 md:col-6 xl:col-3">
-                <div class="card grid-nogutter widget-overview-box widget-overview-box-2">
-                    <span class="overview-icon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="overview-title">Revenue</span>
+                    <span class="overview-title">Date:</span>
                     <div class="grid overview-detail">
                         <div class="col-6">
-                            <div class="overview-number">$2,100</div>
+                            <div class="overview-number" type='text'>{{ getHumanDate(world.date) }}</div>
                             <div class="overview-subtext">Expenses</div>
                         </div>
                         <div class="col-6">
@@ -42,95 +20,122 @@
                 </div>
             </div>
             <div class="col-12 md:col-6 xl:col-3">
+                <div class="card grid-nogutter widget-overview-box widget-overview-box-2">
+<!--                    <span class="overview-icon">-->
+<!--                        <i class="pi pi-dollar"></i>-->
+<!--                    </span>-->
+<!--                    <span class="overview-title">Revenue</span>-->
+<!--                    <div class="grid overview-detail">-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">$2,100</div>-->
+<!--                            <div class="overview-subtext">Expenses</div>-->
+<!--                        </div>-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">$9,640</div>-->
+<!--                            <div class="overview-subtext">Income</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-3">
-                    <span class="overview-icon">
-                        <i class="pi pi-users"></i>
-                    </span>
-                    <span class="overview-title">Customers</span>
-                    <div class="grid overview-detail">
-                        <div class="col-6">
-                            <div class="overview-number">8272</div>
-                            <div class="overview-subtext">Active</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="overview-number">25402</div>
-                            <div class="overview-subtext">Registered</div>
-                        </div>
-                    </div>
+<!--                    <span class="overview-icon">-->
+<!--                        <i class="pi pi-users"></i>-->
+<!--                    </span>-->
+<!--                    <span class="overview-title">Customers</span>-->
+<!--                    <div class="grid overview-detail">-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">8272</div>-->
+<!--                            <div class="overview-subtext">Active</div>-->
+<!--                        </div>-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">25402</div>-->
+<!--                            <div class="overview-subtext">Registered</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-4">
-                    <span class="overview-icon">
-                        <i class="pi pi-comment"></i>
-                    </span>
-                    <span class="overview-title">Comments</span>
-                    <div class="grid overview-detail">
-                        <div class="col-6">
-                            <div class="overview-number">12</div>
-                            <div class="overview-subtext">New</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="overview-number">85</div>
-                            <div class="overview-subtext">Responded</div>
-                        </div>
-                    </div>
+<!--                    <span class="overview-icon">-->
+<!--                        <i class="pi pi-comment"></i>-->
+<!--                    </span>-->
+<!--                    <span class="overview-title">Comments</span>-->
+<!--                    <div class="grid overview-detail">-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">12</div>-->
+<!--                            <div class="overview-subtext">New</div>-->
+<!--                        </div>-->
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">85</div>-->
+<!--                            <div class="overview-subtext">Responded</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
-            <div class="col-12 xl:col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Players</h4>
-                        <Dropdown :options="orderWeek" v-model="selectedOrderWeek" optionLabel="name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
-                    </div>
-
-                    <p>Your sales activity over time.</p>
-
-                    <DataTable :value="players" :paginator="true" :rows="20" responsiveLayout="scroll">
-                        <Column field="firstName" header="First Name" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">First Name</span>
-                                {{ slotProps.data.firstName }}
-                            </template>
-                        </Column>
-                        <Column field="lastName" header="Last Name" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">Last Name</span>
-                                {{ slotProps.data.lastName }}
-                            </template>
-                        </Column>
-                        <Column field="position" header="Position" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">Position</span>
-                                {{ slotProps.data.pos }}
-                            </template>
-                        </Column>
-                        <Column field="height" header="Height" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">Height</span>
-                                {{ slotProps.data.height }}
-                            </template>
-                        </Column>
-                        <Column field="weight" header="Weight" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">Weight</span>
-                                {{ slotProps.data.weight }}
-                            </template>
-                        </Column>
-                        <Column field="weight" header="Weight" :sortable="true">
-                            <template #body="slotProps">
-                                <span class="p-column-title">Weight</span>
-                                {{ slotProps.data.weight }}
-                            </template>
-                        </Column>
-                    </DataTable>
-                </div>
-            </div>
+<!--            <div class="col-12 xl:col-12">-->
+<!--                <div class="card">-->
+<!--                    <div class="card-header">-->
+<!--                        <h4>Players</h4>-->
+<!--                        <Dropdown :options="orderWeek" v-model="selectedOrderWeek" optionLabel="name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>-->
+<!--                    </div>-->
+<!--                    <p>Your sales activity over time.</p>-->
+<!--                    <DataTable :value="players" :paginator="true" :rows="20" responsiveLayout="scroll">-->
+<!--                        <Column field="firstName" header="First Name" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">First Name</span>-->
+<!--                                {{ slotProps.data.firstName }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                        <Column field="lastName" header="Last Name" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">Last Name</span>-->
+<!--                                {{ slotProps.data.lastName }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                        <Column field="position" header="Position" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">Position</span>-->
+<!--                                {{ slotProps.data.pos }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                        <Column field="height" header="Height" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">Height</span>-->
+<!--                                {{ slotProps.data.height }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                        <Column field="weight" header="Weight" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">Weight</span>-->
+<!--                                {{ slotProps.data.weight }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                        <Column field="weight" header="Weight" :sortable="true">-->
+<!--                            <template #body="slotProps">-->
+<!--                                <span class="p-column-title">Weight</span>-->
+<!--                                {{ slotProps.data.weight }}-->
+<!--                            </template>-->
+<!--                        </Column>-->
+<!--                    </DataTable>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
+        <Dialog v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="card justify-content-center">
+                <h5>Loading...</h5>
+                <div class="grid">
+                    <div class="col">
+                        <ProgressBar :value="value" :showValue="false"></ProgressBar>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
     </div>
 </template>
 
 <script>
+import moment from 'moment';
 export default {
     data() {
         return {
@@ -139,71 +144,12 @@ export default {
             productsThisWeek: null,
             productsLastWeek: null,
             productService: null,
-            cols: [
-                { field: 'vin', header: 'Vin' },
-                { field: 'year', header: 'Year' },
-                { field: 'brand', header: 'Brand' },
-                { field: 'color', header: 'Color' },
-            ],
-            items: [
-                {
-                    label: 'Shipments',
-                    items: [
-                        { label: 'Tracker', icon: 'pi pi-compass' },
-                        { label: 'Map', icon: 'pi pi-map-marker' },
-                        { label: 'Manage', icon: 'pi pi-pencil' },
-                    ],
-                },
-            ],
-            ordersChart: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                    {
-                        label: 'New',
-                        data: [2, 7, 20, 9, 16, 9, 5],
-                        backgroundColor: ['rgba(100, 181, 246, 0.2)'],
-                        borderColor: ['#64B5F6'],
-                        borderWidth: 3,
-                        fill: true,
-                        tension: .4
-                    },
-                ],
-            },
-            ordersChartOptions: {
-                plugins: {
-                    legend: {
-                        display: true,
-                    }
-                },
-                responsive: true,
-                hover: {
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        min: 0,
-                        max: 20
-                    }
-                }
-            },
-            orderWeek: [
-                { name: 'This Week', code: '0' },
-                { name: 'Last Week', code: '1' },
-            ],
-            revenueChart: {
-                labels: ['Direct', 'Promoted', 'Affiliate'],
-                datasets: [
-                    {
-                        data: [40, 35, 25],
-                        backgroundColor: ['#64B5F6', '#7986CB', '#4DB6AC'],
-                    },
-                ],
-            }
         };
     },
-    created() {
-    },
-    mounted() {
+    filters: {
+        moment: function (date) {
+            return moment(date).format('MM/DD/YYYY');
+        }
     },
     computed: {
         players: {
@@ -245,9 +191,19 @@ export default {
             set(value) {
                 this.$store.commit('updateWorld', value)
             }
-        }
+        },
     },
     methods: {
+        getHumanDate: function(date) {
+            return moment(date).format('MM/DD/YYYY');
+        },
+        getTomorrow: function(date) {
+            return this.getHumanDate(date).add(1,'days');
+        },
+        continueToTomorrow: function(date) {
+            let obj = this
+            obj.world.date = obj.getTomorrow(date)
+        },
         changeDataset(event) {
             const dataSet = [
                 [2, 7, 20, 9, 16, 9, 5],
@@ -261,7 +217,6 @@ export default {
             this.ordersChart.datasets[0].borderColor = event.currentTarget.getAttribute('data-stroke');
             this.ordersChart.datasets[0].backgroundColor = event.currentTarget.getAttribute('data-fill');
         },
-
         recentSales($event) {
             if ($event.value.code === '0') {
                 this.products = this.productsThisWeek;
@@ -269,7 +224,6 @@ export default {
                 this.products = this.productsLastWeek;
             }
         },
-
         shuffle() {
             for (let i = this.products.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -277,15 +231,12 @@ export default {
             }
             return this.products;
         },
-
         menuToggle($event) {
             this.$refs.menu.toggle($event);
         },
-
         refreshDataset($event) {
             this.$refs.chart.reinit($event);
         },
-
         formatCurrency(value) {
             return value.toLocaleString('en-US', {
                 style: 'currency',

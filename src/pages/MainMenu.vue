@@ -5,9 +5,6 @@
                 <div class="row"></div>
                 <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
                     <div class="mb-3 font-bold text-2xl">
-<!--                        <h1>Head Coach 2022</h1>-->
-<!--                        <span class="text-900">One Coach, </span>-->
-<!--                        <span class="text-blue-600">Many Teams</span>-->
                     </div>
                     <div class="text-700 text-sm mb-6">Ac turpis egestas maecenas pharetra convallis posuere morbi leo urna.</div>
                     <div class="grid">
@@ -15,28 +12,28 @@
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-desktop text-4xl text-blue-500"></i>
                             </span>
-                            <div class="text-900 mb-3 font-medium">Built for Developers</div>
+                            <div class="text-900 mb-3 font-medium">Built for Coaches</div>
                             <span class="text-700 text-sm line-height-3">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</span>
                         </div>
                         <div class="col-12 md:col-4 mb-4 px-5">
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-lock text-4xl text-blue-500"></i>
                             </span>
-                            <div class="text-900 mb-3 font-medium">End-to-End Encryption</div>
+                            <div class="text-900 mb-3 font-medium">End-to-End Management</div>
                             <span class="text-700 text-sm line-height-3">Risus nec feugiat in fermentum posuere urna nec. Posuere sollicitudin aliquam ultrices sagittis.</span>
                         </div>
                         <div class="col-12 md:col-4 mb-4 px-5">
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-check-circle text-4xl text-blue-500"></i>
                             </span>
-                            <div class="text-900 mb-3 font-medium">Easy to Use</div>
+                            <div class="text-900 mb-3 font-medium">New UI</div>
                             <span class="text-700 text-sm line-height-3">Ornare suspendisse sed nisi lacus sed viverra tellus. Neque volutpat ac tincidunt vitae semper.</span>
                         </div>
                         <div class="col-12 md:col-4 mb-4 px-5">
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-globe text-4xl text-blue-500"></i>
                             </span>
-                            <div class="text-900 mb-3 font-medium">Fast & Global Support</div>
+                            <div class="text-900 mb-3 font-medium">Faster Than Ever</div>
                             <span class="text-700 text-sm line-height-3">Fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus.</span>
                         </div>
                         <div class="col-12 md:col-4 mb-4 px-5">
@@ -50,7 +47,7 @@
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-shield text-4xl text-blue-500"></i>
                             </span>
-                            <div class="text-900 mb-3 font-medium">Trusted Securitty</div>
+                            <div class="text-900 mb-3 font-medium">Fully Licensed</div>
                             <span class="text-700 text-sm line-height-3">Mattis rhoncus urna neque viverra justo nec ultrices. Id cursus metus aliquam eleifend.</span>
                         </div>
                     </div>
@@ -154,19 +151,18 @@
                 <h5>Loading...</h5>
                 <div class="grid">
                     <div class="col">
-                        <ProgressBar :value="value" :showValue="false"></ProgressBar>
+                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="true"> Percent Complete: {{value1}}% </ProgressBar>
                     </div>
                 </div>
             </div>
         </Dialog>
+
     </div>
 </template>
 
 <script>
 import { Dexie } from 'dexie';
-import { download } from 'downloadjs';
-import { InitNewCareer } from "@/data/db";
-import {importDB, exportDB, importInto, peakImportFile} from "dexie-export-import";
+import { InitNewCareer, initStoragePersistence, isStoragePersisted } from "@/data/db";
 
 export default {
     data() {
@@ -176,6 +172,9 @@ export default {
             loadingDialog: false,
             coach: {},
             existing_db_names: [],
+            value1: 0,
+            interval: null,
+            loading: false,
             statuses: [
                 {label: 'None', value: 0 },
                 {label: 'High School', value: 1 },
@@ -183,6 +182,17 @@ export default {
                 {label: 'Professional', value: 3 },
                 {label: 'Hall Of Fame', value: 4 }
             ]
+        }
+    },
+    watch: {
+        value1() {
+            let obj = this
+            if(obj.value1 == 100) {
+                obj.loadingDialog = false
+                obj.endProgress();
+                console.log("Loading over")
+                obj.$router.push('dashboard')
+            }
         }
     },
     computed: {
@@ -265,7 +275,7 @@ export default {
             set(value) {
                 this.$store.commit('updateWorld', value)
             }
-        }
+        },
     },
     methods: {
         openNew() {
@@ -315,17 +325,16 @@ export default {
             let obj = this
             obj.existing_db_names = []
             this.openContinue()
-            // console.log("Dumping Databases");
-            // console.log("=================");
+            console.log("Dumping Databases");
+            console.log("=================");
             await Dexie.getDatabaseNames(function (databaseNames) {
                 if (databaseNames.length === 0) {
                     // No databases at this origin as we know of.
-                    // console.log("Could not find databases on current origin.");
-                    // console.log("Was your database created without using Dexie? Try the [Add database] button above!");
+                    console.log("Could not find databases on current origin.");
                 } else {
                     // At least one database to dump
                     dump(databaseNames);
-                    // console.log("Dumping data...");
+                    console.log("Dumping data...");
                 }
 
                 function dump(databaseNames) {
@@ -333,27 +342,17 @@ export default {
                         obj.data = new Dexie(databaseNames[0]);
                         // Now, open database without specifying any version. This will make the database open any existing database and read its schema automatically.
                         obj.data.open().then(function () {
-                            // console.log("var db = new Dexie('" + obj.data.name + "');");
                             obj.existing_db_names.push(obj.data.name)
-                            // console.log("db.version(" + obj.data.verno + ").stores({");
                             obj.data.tables.forEach(function (table, i) {
                                 var primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
                                 var schemaSyntax = primKeyAndIndexes.map(function (index) { return index.src; }).join(',');
-                                // console.log("    " + table.name + ": " + "'" + schemaSyntax + "'" + (i < obj.data.tables.length - 1 ? "," : ""));
-                                // Note: We could also dump the objects here if we'd like to:
-                                 table.each(function (object) {
-                                     // console.log(JSON.stringify(object));
-                                 });
                             });
-                            // console.log("});\n");
                         }).finally(function () {
-                            // obj.data.close();
+                            obj.data.close();
                             dump(databaseNames.slice(1));
                         });;
                     } else {
-                        // console.log("Finished dumping databases");
-                        // console.log("==========================");
-                        // console.log("Hint: Is your DB not listed? Try using the [Add database] button above!");
+                        console.log("Finished dumping databases");
                     }
                 }
             });
@@ -361,6 +360,11 @@ export default {
         async loadSelectedCareer(name) {
             let obj = this
             let db_name = name;
+
+            obj.continueDialog = false
+            obj.loadingDialog = true;
+            obj.restartTimer();
+
             console.log("DB: " + db_name)
             const db = new Dexie(db_name);
             if (!(await Dexie.exists(db.name))) {
@@ -370,30 +374,53 @@ export default {
             await db.open()
             console.log("Loaded: " + db.name);
 
+            // if(!isStoragePersisted())
+            // {
+            //     initStoragePersistence();
+            // }
+
             obj.teams = await db.table('teams').toArray();
-            // console.log(obj.teams)
             obj.players = await db.table('players').toArray();
-            // console.log(obj.players)
             obj.user = await db.table('user').toArray();
-            // console.log(obj.user)
             obj.world = await db.table('world').toArray();
-            // console.log(obj.world)
 
             obj.user = obj.user[0];
             obj.firstName = obj.user.first;
             obj.lastName = obj.user.last;
             obj.world = obj.world[0];
 
-            try {
-                const blob = await exportDB(db);
-                download(blob, "dexie-export.json", "application/json");
-                console.log('Success');
-            } catch (error) {
-                console.error(''+error);
-            }
+            // try {
+            //     const blob = await exportDB(db);
+            //     download(blob, "dexie-export.json", "application/json");
+            //     console.log('Success');
+            // } catch (error) {
+            //     console.error(''+error);
+            // }
 
-            console.log("Could open DB")
-            obj.$router.push('dashboard')
+        },
+        restartTimer() {
+            clearInterval(this.interval);
+            this.value1 = 0;
+            setTimeout(() => {
+                this.startProgress();
+            }, 500);
+        },
+        startProgress() {
+            let obj = this
+            obj.interval = setInterval(() => {
+                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
+                if (newValue >= 100) {
+                    obj.value1 = 100;
+                    return;
+                }
+                this.value1 = newValue;
+            }, 1000);
+        },
+        endProgress() {
+            console.log('ending loading')
+            let obj = this
+            clearInterval(obj.interval);
+            obj.interval = null;
         }
     }
 }

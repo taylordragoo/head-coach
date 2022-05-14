@@ -786,12 +786,7 @@ export const COMPOSITE_WEIGHTS = {
 
 export const DEFAULT_ATTRIBUTES = {
     phase: 1,
-    year: 2022,
-    month: 7,
-    day: 1,
-    hour: 8,
-    minute: 0,
-    second: 0,
+    date: '07/01/2022',
     confs: DEFAULT_CONFS,
     divs: DEFAULT_DIVS,
     lid: 1,
