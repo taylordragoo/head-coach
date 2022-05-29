@@ -3,14 +3,10 @@
         <div class="grid">
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-1">
-                    <span class="overview-icon">
-                        <i class="pi pi-calendar-times"></i>
-                    </span>
-                    <span class="overview-title">Date:</span>
                     <div class="grid overview-detail">
                         <div class="col-6">
                             <div class="overview-number" type='text'>{{ getHumanDate(world.date) }}</div>
-                            <div class="overview-subtext">Expenses</div>
+                            <div class="overview-subtext">Date</div>
                         </div>
                         <div class="col-6">
                             <div class="overview-number">$9,640</div>
@@ -21,56 +17,44 @@
             </div>
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-2">
-<!--                    <span class="overview-icon">-->
-<!--                        <i class="pi pi-dollar"></i>-->
-<!--                    </span>-->
-<!--                    <span class="overview-title">Revenue</span>-->
-<!--                    <div class="grid overview-detail">-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">$2,100</div>-->
-<!--                            <div class="overview-subtext">Expenses</div>-->
-<!--                        </div>-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">$9,640</div>-->
-<!--                            <div class="overview-subtext">Income</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="grid overview-detail">
+                        <div class="col-6">
+                            <div class="overview-number">$2,100</div>
+                            <div class="overview-subtext">Expenses</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="overview-number">$9,640</div>
+                            <div class="overview-subtext">Income</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-3">
-<!--                    <span class="overview-icon">-->
-<!--                        <i class="pi pi-users"></i>-->
-<!--                    </span>-->
-<!--                    <span class="overview-title">Customers</span>-->
-<!--                    <div class="grid overview-detail">-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">8272</div>-->
-<!--                            <div class="overview-subtext">Active</div>-->
-<!--                        </div>-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">25402</div>-->
-<!--                            <div class="overview-subtext">Registered</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="grid overview-detail">
+                        <div class="col-6">
+                            <div class="overview-number">8272</div>
+                            <div class="overview-subtext">Active</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="overview-number">25402</div>
+                            <div class="overview-subtext">Registered</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-4">
-<!--                    <span class="overview-icon">-->
-<!--                        <i class="pi pi-comment"></i>-->
-<!--                    </span>-->
-<!--                    <span class="overview-title">Comments</span>-->
-<!--                    <div class="grid overview-detail">-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">12</div>-->
-<!--                            <div class="overview-subtext">New</div>-->
-<!--                        </div>-->
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">85</div>-->
-<!--                            <div class="overview-subtext">Responded</div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="grid overview-detail">
+                        <div class="col-6">
+                            <div class="overview-number">12</div>
+                            <div class="overview-subtext">New</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="overview-number">85</div>
+                            <div class="overview-subtext">Responded</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 <!--            <div class="col-12 xl:col-12">-->
@@ -136,6 +120,7 @@
 
 <script>
 import moment from 'moment';
+
 export default {
     data() {
         return {
@@ -148,7 +133,7 @@ export default {
     },
     filters: {
         moment: function (date) {
-            return moment(date).format('MM/DD/YYYY');
+            return moment(date).format('MM/DD/YY');
         }
     },
     computed: {
@@ -195,14 +180,10 @@ export default {
     },
     methods: {
         getHumanDate: function(date) {
-            return moment(date).format('MM/DD/YYYY');
+            return moment(date).format('MM/DD/YY');
         },
         getTomorrow: function(date) {
             return this.getHumanDate(date).add(1,'days');
-        },
-        continueToTomorrow: function(date) {
-            let obj = this
-            obj.world.date = obj.getTomorrow(date)
         },
         changeDataset(event) {
             const dataSet = [

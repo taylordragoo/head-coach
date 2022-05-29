@@ -151,7 +151,7 @@
                 <h5>Loading...</h5>
                 <div class="grid">
                     <div class="col">
-                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="true"> Percent Complete: {{value1}}% </ProgressBar>
+                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="false"> Percent Complete: {{value1}}% </ProgressBar>
                     </div>
                 </div>
             </div>
@@ -162,7 +162,7 @@
 
 <script>
 import { Dexie } from 'dexie';
-import { InitNewCareer, initStoragePersistence, isStoragePersisted } from "@/data/db";
+import { InitNewCareer } from "@/data/db";
 
 export default {
     data() {
@@ -196,46 +196,6 @@ export default {
         }
     },
     computed: {
-        firstName: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sFirstName
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateFirstName', value)
-            }
-        },
-        lastName: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sLastName
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateLastName', value)
-            }
-        },
-        age: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sAge
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateAge', value)
-            }
-        },
-        exp: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sExperience
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateExp', value)
-            }
-        },
         teams: {
             /* By default get() is used */
             get() {
@@ -366,6 +326,7 @@ export default {
             obj.restartTimer();
 
             console.log("DB: " + db_name)
+            // restoreState();
             const db = new Dexie(db_name);
             if (!(await Dexie.exists(db.name))) {
                 console.log("Db does not exist");
@@ -373,11 +334,6 @@ export default {
             }
             await db.open()
             console.log("Loaded: " + db.name);
-
-            // if(!isStoragePersisted())
-            // {
-            //     initStoragePersistence();
-            // }
 
             obj.teams = await db.table('teams').toArray();
             obj.players = await db.table('players').toArray();
@@ -387,15 +343,9 @@ export default {
             obj.user = obj.user[0];
             obj.firstName = obj.user.first;
             obj.lastName = obj.user.last;
+            obj.age = obj.user.age;
+            obj.exp = obj.user.exp;
             obj.world = obj.world[0];
-
-            // try {
-            //     const blob = await exportDB(db);
-            //     download(blob, "dexie-export.json", "application/json");
-            //     console.log('Success');
-            // } catch (error) {
-            //     console.error(''+error);
-            // }
 
         },
         restartTimer() {
@@ -403,13 +353,13 @@ export default {
             this.value1 = 0;
             setTimeout(() => {
                 this.startProgress();
-            }, 500);
+            }, 100);
         },
         startProgress() {
             let obj = this
             obj.interval = setInterval(() => {
                 let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
-                if (newValue >= 100) {
+                if (newValue >= 150) {
                     obj.value1 = 100;
                     return;
                 }

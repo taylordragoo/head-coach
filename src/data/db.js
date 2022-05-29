@@ -28,6 +28,28 @@ import { date, random, datatype, internet, company, commerce, address, name, ima
 import _ from 'lodash';
 import moment from 'moment'
 
+export function SaveGame(d, u, w, t, p) {
+    let db = d;
+    // let user_data = u;
+    // let world = w;
+    // let teams = t;
+    // let players = p;
+
+    db.user.update(0, {u}).then(function (updated) {
+        if (updated)
+            console.log ("Saved Successfully!");
+        else
+            console.log ("Nothing was updated - there were no data with primary key");
+    });
+
+    db.world.update(0, {w}).then(function (updated) {
+        if (updated)
+            console.log ("Saved Successfully!");
+        else
+            console.log ("Nothing was updated - there were no data with primary key");
+    });
+}
+
 export function InitNewCareer(dbName, player) {
 
     const db = new Dexie(dbName);
@@ -755,6 +777,7 @@ async function tryPersistWithoutPromptingUser() {
 }
 
 async function initStoragePersistence() {
+    console.log('attempting to persist')
     const persist = await tryPersistWithoutPromptingUser();
     switch (persist) {
         case "never":

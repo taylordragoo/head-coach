@@ -8,7 +8,7 @@
 
             <div class="layout-breadcrumb viewname" style="text-transform: uppercase">
                 <template v-if="$route.meta.breadcrumb">
-                    <span>{{$route.meta.breadcrumb[0].label}}</span>
+                    <span>{{ this.$store.state.sUser.first + ' ' + this.$store.state.sUser.last }}</span>
                 </template>
             </div>
 
@@ -84,38 +84,38 @@
                 </li>
 
                 <li class="notifications-item" :class="{ 'active-menuitem ': topbarSecondNotificationMenuActive }">
-                    <a href="#" tabindex="0" @click="onTopbarNotificationMenuButtonClick">
+                    <a href="#" tabindex="0" @click="onTopbarSecondNotificationMenuButtonClick">
                         <i class="pi pi-globe"></i>
                     </a>
                     <ul class="notifications-menu fade-in-up">
                         <li>
-                            <a href="#">
+                            <a href="">
                                 <i class="pi pi-user"></i>
-                                <span>Profile</span>
+                                <span style='padding-left: 2%'> Profile</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="">
                                 <i class="pi pi-cog"></i>
-                                <span>Settings</span>
+                                <span style='padding-left: 2%'> Settings</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="">
                                 <i class="pi pi-calendar"></i>
-                                <span>Calendar</span>
+                                <span style='padding-left: 2%'> Calendar</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="">
                                 <i class="pi pi-inbox"></i>
-                                <span>Inbox</span>
+                                <span style='padding-left: 2%'> Inbox</span>
                             </a>
                         </li>
                         <li>
                             <a href="/#/">
                                 <i class="pi pi-power-off"></i>
-                                <span>Exit</span>
+                                <span style='padding-left: 2%'> Save & Exit</span>
                             </a>
                         </li>
                     </ul>
@@ -129,12 +129,24 @@
 
             </ul>
         </div>
+        <Dialog v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="card justify-content-center">
+                <h5>Loading...</h5>
+                <div class="grid">
+                    <div class="col">
+                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="false"> Percent Complete: {{value1}}% </ProgressBar>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
     </div>
 </template>
 
 <script>
 import moment from 'moment';
 import AppMenu from "./AppMenu";
+import { SaveGame } from "@/data/db";
+
 export default {
     name: "AppTopbar",
     emits: ["menu-click", "menuitem-click", "root-menuitem-click", "menu-button-click", "search-click", "topbar-notification", "topbar-second-notification", "topbar-user-menu", "topbar-cont-menu", "right-menubutton-click"],
@@ -151,7 +163,22 @@ export default {
     data() {
         return {
             items: [],
+            loadingDialog: false,
+            value1: 0,
+            interval: null,
+            loading: false,
         };
+    },
+    watch: {
+        value1() {
+            let obj = this
+            if(obj.value1 == 100) {
+                obj.loadingDialog = false
+                obj.endProgress();
+                console.log("Loading over")
+                obj.$router.push('dashboard')
+            }
+        }
     },
     components: {
         AppMenu
@@ -167,11 +194,13 @@ export default {
         },
         getTomorrow: function(date) {
             let obj = this
-            return moment(obj.getHumanDate(date)).add(1,'days');
+            let new_date = moment(obj.getHumanDate(date)).add(1,'days');
+            return new_date._d;
         },
         continueToTomorrow: function(date) {
             let obj = this
             obj.world.date = obj.getTomorrow(date)
+            SaveGame();
         },
         onMenuClick(event) {
             this.$emit("menu-click", event);
@@ -199,13 +228,46 @@ export default {
         },
         onTopbarContMenuButtonClick(event) {
             let obj = this
-            obj.continueToTomorrow(obj.world.date)
+            obj.openContinue();
         },
         onRightMenuClick(event) {
             this.$emit("right-menubutton-click", event);
         },
         isMobile() {
             return window.innerWidth <= 1091;
+        },
+        restartTimer() {
+            clearInterval(this.interval);
+            this.value1 = 0;
+            setTimeout(() => {
+                this.startProgress();
+            }, 100);
+        },
+        startProgress() {
+            let obj = this
+            obj.interval = setInterval(() => {
+                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
+                if (newValue >= 200) {
+                    obj.value1 = 100;
+                    return;
+                }
+                this.value1 = newValue;
+            }, 250);
+        },
+        endProgress() {
+            console.log('ending loading')
+            let obj = this
+            clearInterval(obj.interval);
+            obj.interval = null;
+            obj.continueToTomorrow(obj.world.date)
+            obj.hideDialog()
+        },
+        openContinue() {
+            this.loadingDialog = true;
+            this.restartTimer();
+        },
+        hideDialog() {
+            this.loadingDialog = false;
         }
     },
     computed: {

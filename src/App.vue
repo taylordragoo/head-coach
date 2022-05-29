@@ -1,10 +1,10 @@
 <template>
     <div :class="containerClass" :data-theme="colorScheme" @click="onDocumentClick($event)">
         <div class="layout-content-wrapper">
-            <AppTopBar :topbarNotificationMenuActive="topbarNotificationMenuActive" :topbarUserMenuActive="topbarUserMenuActive"
+            <AppTopBar :topbarNotificationMenuActive="topbarNotificationMenuActive" :topbarSecondNotificationMenuActive="topbarSecondNotificationMenuActive" :topbarUserMenuActive="topbarUserMenuActive"
                        :layoutMode="layoutMode" :menu="menu" :menuActive="menuActive" :staticMenuMobileActive='staticMenuMobileActive'
                        @menu-click="onMenuClick" @menuitem-click="onMenuItemClick" @root-menuitem-click="onRootMenuItemClick"
-                       @menu-button-click="onMenuButtonClick" @search-click="toggleSearch" @topbar-notification="onTopbarNotificationMenuButtonClick"
+                       @menu-button-click="onMenuButtonClick" @search-click="toggleSearch" @topbar-notification="onTopbarNotificationMenuButtonClick" @topbar-second-notification="onTopbarSecondNotificationMenuButtonClick"
                        @topbar-user-menu="onTopbarUserMenuButtonClick" @right-menu-click="onRightMenuButtonClick" @right-menubutton-click="onRightMenuButtonClick"></AppTopBar>
 
             <div class="layout-content">
@@ -48,6 +48,7 @@ export default {
             topbarUserMenuActive: false,
             notificationMenuClick: false,
             topbarNotificationMenuActive: false,
+            topbarSecondNotificationMenuActive: false,
             rightMenuClick: false,
             rightMenuActive: false,
             configActive: false,
@@ -226,6 +227,10 @@ export default {
                 this.topbarNotificationMenuActive = false;
             }
 
+            if (!this.secondNotificationMenuClick) {
+                this.topbarSecondNotificationMenuActive = false;
+            }
+
             if (!this.rightMenuClick) {
                 this.rightMenuActive = false;
             }
@@ -252,6 +257,7 @@ export default {
             this.userMenuClick = false;
             this.rightMenuClick = false;
             this.notificationMenuClick = false;
+            this.secondNotificationMenuClick = false;
             this.menuClick = false;
         },
         onMenuClick() {
@@ -303,6 +309,14 @@ export default {
         onTopbarNotificationMenuButtonClick(event) {
             this.notificationMenuClick = true;
             this.topbarNotificationMenuActive = !this.topbarNotificationMenuActive;
+
+            this.hideOverlayMenu();
+
+            event.preventDefault();
+        },
+        onTopbarSecondNotificationMenuButtonClick(event) {
+            this.secondNotificationMenuClick = true;
+            this.topbarSecondNotificationMenuActive = !this.topbarSecondNotificationMenuActive;
 
             this.hideOverlayMenu();
 

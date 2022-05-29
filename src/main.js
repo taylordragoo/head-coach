@@ -103,7 +103,9 @@ import Access from './pages/Access';
 import Error from './pages/Error';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-import { createStore } from 'vuex';
+// import { Vuex, createStore } from 'vuex';
+import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 
 const app = createApp({
     computed: {
@@ -227,10 +229,6 @@ app.component('BlockViewer', BlockViewer);
 
 function getDefaultState () {
 	return {
-		sFirstName: '',
-		sLastName: '',
-		sAge: null,
-		sExperience: null,
 		sTeams: [],
 		sPlayers: [],
 		sUser: {},
@@ -241,18 +239,12 @@ function getDefaultState () {
 // eslint-disable-next-line no-unused-vars
 function createNewStore() {
 	// eslint-disable-next-line no-unused-vars
-	let store = createStore({
-		state () {
-			return {
-				sFirstName: '',
-				sLastName: '',
-				sAge: null,
-				sExperience: null,
-				sTeams: [],
-				sPlayers: [],
-				sUser: {},
-				sWorld: {}
-			}
+	let store = new Vuex.Store({
+		state: {
+			sTeams: [],
+			sPlayers: [],
+			sUser: {},
+			sWorld: {}
 		},
 		actions: {
 			resetState({ commit }) {
@@ -262,18 +254,6 @@ function createNewStore() {
 		mutations: {
 			RESET_STATE(state) {
 				Object.assign(state, getDefaultState())
-			},
-			updateFirstName(state, payload) {
-				state.sFirstName = payload
-			},
-			updateLastName(state, payload) {
-				state.sLastName = payload
-			},
-			updateAge(state, payload) {
-				state.sAge = payload
-			},
-			updateExp(state, payload) {
-				state.sExperience = payload.label
 			},
 			updateTeams(state, payload) {
 				state.sTeams = payload
@@ -287,7 +267,7 @@ function createNewStore() {
 			updateWorld(state, payload) {
 				state.sWorld = payload
 			}
-		}
+		},
 	})
 
 	app.use(store)
