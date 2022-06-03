@@ -27,27 +27,64 @@ import { universities } from "./colleges";
 import { date, random, datatype, internet, company, commerce, address, name, image, providers } from 'faker';
 import _ from 'lodash';
 import moment from 'moment'
+import { User } from '../models/User'
 
-export function SaveGame(d, u, w, t, p) {
-    let db = d;
-    // let user_data = u;
-    // let world = w;
-    // let teams = t;
-    // let players = p;
+export async function SaveGame(d, p, t, u, w) {
+    let db = new Dexie(d);
+    let objPlayers = JSON.parse(p)
+    let objTeams = JSON.parse(t)
+    let objUser = JSON.parse(u)
+    let objWorld = JSON.parse(w)
 
-    db.user.update(0, {u}).then(function (updated) {
-        if (updated)
-            console.log ("Saved Successfully!");
-        else
-            console.log ("Nothing was updated - there were no data with primary key");
+    if (!(await Dexie.exists(db.name))) {
+        console.log("Db does not exist");
+        db.version(1).stores({});
+    }
+
+    db.version(1).stores({
+        user: "++uid, first, last, age, exp, ptid",
+        teams: "++tid, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
+        players: "++pid, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
+        world: '++wid, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
+        phase: '++id, phase',
     });
 
-    db.world.update(0, {w}).then(function (updated) {
+    db.version(2).stores({});
+
+    await db.open()
+
+    for(let x in objPlayers) {
+        await db.players.update(1, x).then(function (updated) {
+            if (updated)
+                console.log (x.pid + " was updated");
+            else
+                console.log (x.pid + " was not updated");
+        });
+    }
+
+    for(let x in objTeams) {
+        await db.teams.update(1, objTeams).then(function (updated) {
+            if (updated)
+                console.log (x.tid + " was updated");
+            else
+                console.log (x.tid + " was not updated");
+        });
+    }
+
+    await db.user.update(1, objUser).then(function (updated) {
         if (updated)
-            console.log ("Saved Successfully!");
+            console.log ("User was updated");
         else
-            console.log ("Nothing was updated - there were no data with primary key");
+            console.log ("Nothing was updated");
     });
+
+    await db.world.update(1, objWorld).then(function (updated) {
+        if (updated)
+            console.log ("World was updated");
+        else
+            console.log ("Nothing was updated");
+    });
+
 }
 
 export function InitNewCareer(dbName, player) {
@@ -59,9 +96,11 @@ export function InitNewCareer(dbName, player) {
             user: "++uid, first, last, age, exp, ptid",
             teams: "++tid, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
             players: "++pid, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
-            world: '++wid, phase, year, month, day, hour, minute, second, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
+            world: '++wid, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
             phase: '++id, phase',
         });
+
+        db.user.mapToClass(User);
 
         db.user.add({
             first: player._first,
@@ -706,88 +745,4 @@ function CreatePlayers(database, position, amount, tid) {
     })
 
     return players
-}
-
-/** Check if storage is persisted already.
- @returns {Promise<boolean>} Promise resolved with true if current origin is
- using persistent storage, false if not, and undefined if the API is not
- present.
- */
-async function isStoragePersisted() {
-    return await navigator.storage && navigator.storage.persisted ?
-        navigator.storage.persisted() :
-        undefined;
-}
-
-/** Tries to convert to persisted storage.
- @returns {Promise<boolean>} Promise resolved with true if successfully
- persisted the storage, false if not, and undefined if the API is not present.
- */
-async function persist() {
-    return await navigator.storage && navigator.storage.persist ?
-        navigator.storage.persist() :
-        undefined;
-}
-
-/** Queries available disk quota.
- @see https://developer.mozilla.org/en-US/docs/Web/API/StorageEstimate
- @returns {Promise<{quota: number, usage: number}>} Promise resolved with
- {quota: number, usage: number} or undefined.
- */
-async function showEstimatedQuota() {
-    return await navigator.storage && navigator.storage.estimate ?
-        navigator.storage.estimate() :
-        undefined;
-}
-
-/** Tries to persist storage without ever prompting user.
- @returns {Promise<string>}
- "never" In case persisting is not ever possible. Caller don't bother
- asking user for permission.
- "prompt" In case persisting would be possible if prompting user first.
- "persisted" In case this call successfully silently persisted the storage,
- or if it was already persisted.
- */
-async function tryPersistWithoutPromptingUser() {
-    if (!navigator.storage || !navigator.storage.persisted) {
-        return "never";
-    }
-    let persisted = await navigator.storage.persisted();
-    if (persisted) {
-        return "persisted";
-    }
-    if (!navigator.permissions || !navigator.permissions.query) {
-        return "prompt"; // It MAY be successful to prompt. Don't know.
-    }
-    const permission = await navigator.permissions.query({
-        name: "persistent-storage"
-    });
-    if (permission.state === "granted") {
-        persisted = await navigator.storage.persist();
-        if (persisted) {
-            return "persisted";
-        } else {
-            throw new Error("Failed to persist");
-        }
-    }
-    if (permission.state === "prompt") {
-        return "prompt";
-    }
-    return "never";
-}
-
-async function initStoragePersistence() {
-    console.log('attempting to persist')
-    const persist = await tryPersistWithoutPromptingUser();
-    switch (persist) {
-        case "never":
-            console.log("Not possible to persist storage");
-            break;
-        case "persisted":
-            console.log("Successfully persisted storage silently");
-            break;
-        case "prompt":
-            console.log("Not persisted, but we may prompt user when we want to.");
-            break;
-    }
 }

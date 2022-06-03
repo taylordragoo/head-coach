@@ -199,8 +199,8 @@ export default {
         },
         continueToTomorrow: function(date) {
             let obj = this
-            obj.world.date = obj.getTomorrow(date)
-            SaveGame();
+            SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world));
+            obj.world.date = obj.getHumanDate(obj.getTomorrow(date))
         },
         onMenuClick(event) {
             this.$emit("menu-click", event);
@@ -252,7 +252,7 @@ export default {
                     return;
                 }
                 this.value1 = newValue;
-            }, 250);
+            }, 600);
         },
         endProgress() {
             console.log('ending loading')

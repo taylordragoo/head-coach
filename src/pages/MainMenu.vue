@@ -364,7 +364,7 @@ export default {
                     return;
                 }
                 this.value1 = newValue;
-            }, 1000);
+            }, 750);
         },
         endProgress() {
             console.log('ending loading')

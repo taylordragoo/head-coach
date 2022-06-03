@@ -103,7 +103,6 @@ import Access from './pages/Access';
 import Error from './pages/Error';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-// import { Vuex, createStore } from 'vuex';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 
@@ -113,8 +112,6 @@ const app = createApp({
 			switch (this.$route.path) {
 				case '/':
 					return MainMenu;
-				case '/login':
-					return Login;
 				case '/error':
 					return Error;
 				case '/loading':

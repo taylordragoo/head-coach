@@ -4,14 +4,14 @@
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-1">
                     <div class="grid overview-detail">
-                        <div class="col-6">
+                        <div class="col-12">
                             <div class="overview-number" type='text'>{{ getHumanDate(world.date) }}</div>
                             <div class="overview-subtext">Date</div>
                         </div>
-                        <div class="col-6">
-                            <div class="overview-number">$9,640</div>
-                            <div class="overview-subtext">Income</div>
-                        </div>
+<!--                        <div class="col-6">-->
+<!--                            <div class="overview-number">$9,640</div>-->
+<!--                            <div class="overview-subtext">Income</div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -180,7 +180,7 @@ export default {
     },
     methods: {
         getHumanDate: function(date) {
-            return moment(date).format('MM/DD/YY');
+            return moment(date).format('MM/DD/YYYY');
         },
         getTomorrow: function(date) {
             return this.getHumanDate(date).add(1,'days');

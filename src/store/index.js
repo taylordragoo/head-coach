@@ -1,19 +1,47 @@
-// import { createStore } from 'vuex'
-// import { app } from '../main.js'
+import Vuex from 'vuex';
 
-// Create a new store instance.
-// const store = createStore({
-//     state () {
-//         return {
-//             count: 0
-//         }
-//     },
-//     mutations: {
-//         increment (state) {
-//             state.count++
-//         }
-//     }
-// })
+function getDefaultState () {
+    return {
+        sTeams: [],
+        sPlayers: [],
+        sUser: {},
+        sWorld: {}
+    }
+}
 
-// Install the store instance as a plugin
-// app.use(store)
+// eslint-disable-next-line no-unused-vars
+export function createNewStore() {
+    // eslint-disable-next-line no-unused-vars
+    let store = new Vuex.Store({
+        state: {
+            sTeams: [],
+            sPlayers: [],
+            sUser: {},
+            sWorld: {}
+        },
+        actions: {
+            resetState({ commit }) {
+                commit('RESET_STATE')
+            }
+        },
+        mutations: {
+            RESET_STATE(state) {
+                Object.assign(state, getDefaultState())
+            },
+            updateTeams(state, payload) {
+                state.sTeams = payload
+            },
+            updatePlayers(state, payload) {
+                state.sPlayers = payload
+            },
+            updateUser(state, payload) {
+                state.sUser = payload
+            },
+            updateWorld(state, payload) {
+                state.sWorld = payload
+            }
+        },
+    })
+
+    return store
+}
