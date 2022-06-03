@@ -10,13 +10,6 @@ sassdoc
 
 package-lock.json
 
-/public/layout/css/layout-*.css
-/public/layout/css/layout-*.map
-/public/layout/css/landing.css
-/public/layout/css/landing.css.map
-/public/theme/**/theme-*.css
-/public/theme/**/theme-*.map
-/src/assets/sass/theme/designer
 /.env
 
 #Electron-builder output
