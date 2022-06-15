@@ -42,10 +42,10 @@ export async function SaveGame(d, p, t, u, w) {
     }
 
     db.version(1).stores({
-        user: "++uid, first, last, age, exp, ptid",
-        teams: "++tid, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
-        players: "++pid, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
-        world: '++wid, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
+        user: "++id, first, last, age, exp, ptid",
+        teams: "++id, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
+        players: "++id, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
+        world: '++id, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
         phase: '++id, phase',
     });
 
@@ -53,37 +53,43 @@ export async function SaveGame(d, p, t, u, w) {
 
     await db.open()
 
-    for(let x in objPlayers) {
-        await db.players.update(1, x).then(function (updated) {
-            if (updated)
-                console.log (x.pid + " was updated");
-            else
-                console.log (x.pid + " was not updated");
-        });
+    try {
+        console.log(objPlayers)
+        for(let x in objPlayers) {
+            await db.players.update(1, x).catch(function (e) {
+                console.log("Failed to save player: " + e)
+            }).finally(function() {
+                console.log(x + " Player Saved")
+            })
+        }
+        console.log(objTeams)
+        for(let x in objTeams) {
+            await db.teams.update(1, objTeams).catch(function (e) {
+                console.log("Failed to save player: " + e)
+            }).finally(function() {
+                console.log(x + " Team Saved")
+            })
+        }
+
+        await db.user.update(1, objUser).catch(function (e) {
+            console.log("Failed to save player: " + e)
+        }).finally(function() {
+            console.log("User Saved")
+        })
+
+        await db.world.update(1, objWorld).catch(function (e) {
+            console.log("Failed to save player: " + e)
+        }).finally(function() {
+            console.log("World Saved")
+        })
+
     }
-
-    for(let x in objTeams) {
-        await db.teams.update(1, objTeams).then(function (updated) {
-            if (updated)
-                console.log (x.tid + " was updated");
-            else
-                console.log (x.tid + " was not updated");
-        });
+    catch(err) {
+        console.log("Error: " + err)
     }
-
-    await db.user.update(1, objUser).then(function (updated) {
-        if (updated)
-            console.log ("User was updated");
-        else
-            console.log ("Nothing was updated");
-    });
-
-    await db.world.update(1, objWorld).then(function (updated) {
-        if (updated)
-            console.log ("World was updated");
-        else
-            console.log ("Nothing was updated");
-    });
+    finally {
+        return
+    }
 
 }
 
@@ -93,14 +99,14 @@ export function InitNewCareer(dbName, player) {
     try {
 
         db.version(1).stores({
-            user: "++uid, first, last, age, exp, ptid",
-            teams: "++tid, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
-            players: "++pid, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
-            world: '++wid, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
+            user: "++id, first, last, age, exp, ptid",
+            teams: "++id, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
+            players: "++id, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
+            world: '++id, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
             phase: '++id, phase',
         });
 
-        db.user.mapToClass(User);
+        // db.user.mapToClass(User);
 
         db.user.add({
             first: player._first,
@@ -119,10 +125,7 @@ export function InitNewCareer(dbName, player) {
     } catch (error) {
         console.log(error);
     } finally {
-        console.log("Game Init")
-        // let now = new Date();
-        let day = moment().dayOfYear(1)
-        console.log('Day of year: ' + moment().local(day));
+        return db;
     }
 }
 

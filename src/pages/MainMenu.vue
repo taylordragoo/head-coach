@@ -110,7 +110,7 @@
 
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
-                <a href='/#/dashboard'><Button label="Create" icon="pi pi-check" class="p-button-text" @click="initGameData" /></a>
+                <Button label="Create" icon="pi pi-check" class="p-button-text" @click="initGameData" />
             </template>
         </Dialog>
 
@@ -147,7 +147,7 @@
         </Dialog>
 
         <Dialog v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
-            <div class="card justify-content-center">
+            <div class="justify-content-center">
                 <h5>Loading...</h5>
                 <div class="grid">
                     <div class="col">
@@ -173,6 +173,7 @@ export default {
             coach: {},
             existing_db_names: [],
             value1: 0,
+            db: null,
             interval: null,
             loading: false,
             statuses: [
@@ -261,6 +262,7 @@ export default {
             let obj = this
             let databases = await Dexie.getDatabaseNames();
 
+            // create user object
             let player = {
                 _first: obj.firstName,
                 _last: obj.lastName,
@@ -268,14 +270,29 @@ export default {
                 _exp: obj.coach.exp.label
             }
 
+            // only allow 3 saves total
             if(databases.length < 3) {
                 try {
                     let dbName = obj.firstName + " " + obj.lastName
-                    InitNewCareer(dbName, player)
+                    obj.db = InitNewCareer(dbName, player)
                 } catch (error) {
                     console.error('' + error);
                 } finally {
-                    console.log('Career created')
+                    console.log(obj.db)
+
+                    obj.coachDialog = false
+                    obj.loadingDialog = true;
+                    obj.restartTimer();
+
+                    // load all objects from database as arrays as that is what vuex likes
+                    obj.teams = await obj.db.table('teams').toArray();
+                    obj.players = await obj.db.table('players').toArray();
+                    obj.world = await obj.db.table('world').toArray();
+                    obj.user = await obj.db.table('user').toArray();
+
+                    // should only be one object in this array, get it.
+                    obj.user = obj.user[0];
+                    obj.world = obj.world[0];
                 }
             } else {
                 console.log('too many saves')
@@ -341,10 +358,6 @@ export default {
             obj.world = await db.table('world').toArray();
 
             obj.user = obj.user[0];
-            obj.firstName = obj.user.first;
-            obj.lastName = obj.user.last;
-            obj.age = obj.user.age;
-            obj.exp = obj.user.exp;
             obj.world = obj.world[0];
 
         },
@@ -359,7 +372,7 @@ export default {
             let obj = this
             obj.interval = setInterval(() => {
                 let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
-                if (newValue >= 150) {
+                if (newValue >= 200) {
                     obj.value1 = 100;
                     return;
                 }
@@ -371,7 +384,8 @@ export default {
             let obj = this
             clearInterval(obj.interval);
             obj.interval = null;
-        }
+            obj.loadingDialog = false;
+        },
     }
 }
 </script>

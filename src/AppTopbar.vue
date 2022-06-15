@@ -89,33 +89,33 @@
                     </a>
                     <ul class="notifications-menu fade-in-up">
                         <li>
-                            <a href="">
+                            <a>
                                 <i class="pi pi-user"></i>
                                 <span style='padding-left: 2%'> Profile</span>
                             </a>
                         </li>
                         <li>
-                            <a href="">
+                            <a>
                                 <i class="pi pi-cog"></i>
                                 <span style='padding-left: 2%'> Settings</span>
                             </a>
                         </li>
                         <li>
-                            <a href="">
+                            <a>
                                 <i class="pi pi-calendar"></i>
-                                <span style='padding-left: 2%'> Calendar</span>
+                                <span style='padding-left: 2%'> Load</span>
                             </a>
                         </li>
                         <li>
-                            <a href="">
+                            <a @click='onSaveMenuButtonClick'>
                                 <i class="pi pi-inbox"></i>
-                                <span style='padding-left: 2%'> Inbox</span>
+                                <span style='padding-left: 2%'> Save</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/#/">
+                            <a @click='onTopbarExitMenuButtonClick'>
                                 <i class="pi pi-power-off"></i>
-                                <span style='padding-left: 2%'> Save & Exit</span>
+                                <span style='padding-left: 2%'> Exit</span>
                             </a>
                         </li>
                     </ul>
@@ -129,8 +129,9 @@
 
             </ul>
         </div>
-        <Dialog v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
-            <div class="card justify-content-center">
+
+        <Dialog mode='indeterminate' :closable='false' v-model:visible="loadingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="justify-content-center">
                 <h5>Loading...</h5>
                 <div class="grid">
                     <div class="col">
@@ -139,6 +140,27 @@
                 </div>
             </div>
         </Dialog>
+        <Dialog mode='indeterminate' :closable='false' v-model:visible="savingDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="justify-content-center">
+                <h5>Saving...</h5>
+                <div class="grid">
+                    <div class="col">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+        <Dialog mode='indeterminate' :closable='false' v-model:visible="exitDialog" :style="{width: '800px'}" :modal="true" class='p-fluid bg-white'>
+            <div class="justify-content-center">
+                <h5>Loading...</h5>
+                <div class="grid">
+                    <div class="col">
+                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="false"> Percent Complete: {{value1}}% </ProgressBar>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+
     </div>
 </template>
 
@@ -164,9 +186,12 @@ export default {
         return {
             items: [],
             loadingDialog: false,
+            savingDialog: false,
+            exitDialog: false,
             value1: 0,
             interval: null,
             loading: false,
+            exiting: false,
         };
     },
     watch: {
@@ -176,7 +201,7 @@ export default {
                 obj.loadingDialog = false
                 obj.endProgress();
                 console.log("Loading over")
-                obj.$router.push('dashboard')
+                // obj.$router.push('dashboard')
             }
         }
     },
@@ -199,8 +224,8 @@ export default {
         },
         continueToTomorrow: function(date) {
             let obj = this
-            SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world));
             obj.world.date = obj.getHumanDate(obj.getTomorrow(date))
+            // SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world));
         },
         onMenuClick(event) {
             this.$emit("menu-click", event);
@@ -230,44 +255,69 @@ export default {
             let obj = this
             obj.openContinue();
         },
+        onTopbarExitMenuButtonClick(event) {
+            let obj = this
+            obj.exiting = true;
+            obj.openExit();
+        },
+        onSaveMenuButtonClick() {
+            let obj = this
+            SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world))
+            obj.openSave()
+        },
         onRightMenuClick(event) {
             this.$emit("right-menubutton-click", event);
         },
         isMobile() {
             return window.innerWidth <= 1091;
         },
-        restartTimer() {
+        restartTimer(timer) {
             clearInterval(this.interval);
             this.value1 = 0;
             setTimeout(() => {
-                this.startProgress();
+                this.startProgress(timer);
             }, 100);
         },
-        startProgress() {
+        startProgress(timer) {
             let obj = this
             obj.interval = setInterval(() => {
-                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
+                let newValue = obj.value1 + Math.floor(Math.random() * 10) + 1;
                 if (newValue >= 200) {
                     obj.value1 = 100;
                     return;
                 }
                 this.value1 = newValue;
-            }, 600);
+            }, timer);
         },
         endProgress() {
             console.log('ending loading')
             let obj = this
             clearInterval(obj.interval);
             obj.interval = null;
-            obj.continueToTomorrow(obj.world.date)
             obj.hideDialog()
         },
         openContinue() {
             this.loadingDialog = true;
-            this.restartTimer();
+            this.continueToTomorrow(this.world.date);
+            this.restartTimer(500);
+        },
+        openSave() {
+            this.savingDialog = true;
+            this.restartTimer(1500);
+        },
+        openExit() {
+            this.exitDialog = true;
+            this.restartTimer(500);
         },
         hideDialog() {
             this.loadingDialog = false;
+            this.savingDialog = false;
+            this.exitDialog = false;
+
+            if(this.exiting) {
+                this.$router.push('/')
+                this.exiting = false
+            }
         }
     },
     computed: {

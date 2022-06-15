@@ -1,4 +1,9 @@
 import Vuex from 'vuex';
+import VuexORM from '@vuex-orm/core'
+import User from '@/models/User'
+import Player from '@/models/Player'
+import Team from '@/models/Team'
+import World from '@/models/World'
 
 function getDefaultState () {
     return {
@@ -11,7 +16,11 @@ function getDefaultState () {
 
 // eslint-disable-next-line no-unused-vars
 export function createNewStore() {
-    // eslint-disable-next-line no-unused-vars
+    const database = new VuexORM.Database()
+    // database.register(User)
+    // database.register(Player)
+    // database.register(Team)
+    // database.register(World)
     let store = new Vuex.Store({
         state: {
             sTeams: [],
@@ -41,6 +50,7 @@ export function createNewStore() {
                 state.sWorld = payload
             }
         },
+        plugins: [VuexORM.install(database, { namespace: 'database' })]
     })
 
     return store

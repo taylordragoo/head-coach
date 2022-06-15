@@ -1,16 +1,17 @@
-export class User {
+import { Model } from '@vuex-orm/core'
+import Team from './Team'
 
-    log() {
-        console.log(JSON.stringify(this));
-    }
+export default class User extends Model {
+    static entity = 'user'
 
-    // Prototype method
-    save(db) {
-        return db.user.put(this); // Will only save own props.
-    }
-
-    // Prototype property
-    get age() {
-        return moment(Date.now()).diff (this.age, 'years');
+    static fields () {
+        return {
+            id: this.uid(),
+            first: this.string(''),
+            last: this.string(''),
+            age: this.number(0),
+            exp: this.string(''),
+            ptid: this.belongsTo(Team, 'team_id')
+        }
     }
 }
