@@ -68,37 +68,37 @@
 <!--                        <Column field="firstName" header="First Name" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">First Name</span>-->
-<!--                                {{ slotProps.data.firstName }}-->
+<!--                                {{ slotProps.database.firstName }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                        <Column field="lastName" header="Last Name" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">Last Name</span>-->
-<!--                                {{ slotProps.data.lastName }}-->
+<!--                                {{ slotProps.database.lastName }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                        <Column field="position" header="Position" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">Position</span>-->
-<!--                                {{ slotProps.data.pos }}-->
+<!--                                {{ slotProps.database.pos }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                        <Column field="height" header="Height" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">Height</span>-->
-<!--                                {{ slotProps.data.height }}-->
+<!--                                {{ slotProps.database.height }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                        <Column field="weight" header="Weight" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">Weight</span>-->
-<!--                                {{ slotProps.data.weight }}-->
+<!--                                {{ slotProps.database.weight }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                        <Column field="weight" header="Weight" :sortable="true">-->
 <!--                            <template #body="slotProps">-->
 <!--                                <span class="p-column-title">Weight</span>-->
-<!--                                {{ slotProps.data.weight }}-->
+<!--                                {{ slotProps.database.weight }}-->
 <!--                            </template>-->
 <!--                        </Column>-->
 <!--                    </DataTable>-->
@@ -194,9 +194,9 @@ export default {
             ];
 
             this.ordersChart.datasets[0].data = dataSet[parseInt(event.currentTarget.getAttribute('data-index'))];
-            this.ordersChart.datasets[0].label = event.currentTarget.getAttribute('data-label');
-            this.ordersChart.datasets[0].borderColor = event.currentTarget.getAttribute('data-stroke');
-            this.ordersChart.datasets[0].backgroundColor = event.currentTarget.getAttribute('data-fill');
+            this.ordersChart.datasets[0].label = event.currentTarget.getAttribute('database-label');
+            this.ordersChart.datasets[0].borderColor = event.currentTarget.getAttribute('database-stroke');
+            this.ordersChart.datasets[0].backgroundColor = event.currentTarget.getAttribute('database-fill');
         },
         recentSales($event) {
             if ($event.value.code === '0') {

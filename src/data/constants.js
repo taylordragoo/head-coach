@@ -38,35 +38,6 @@ export const PLAYER_STATE = {
     SIGNED: 3
 };
 
-export const PLAYER = {
-    pid: number,
-    firstName: string,
-    lastName: string,
-    born: {
-        year: number,
-        loc: string
-    },
-    college: string,
-    pos: string,
-    tid: number,
-    contract: PLAYER_CONTRACT,
-    draft: {
-        round: number,
-        pick: number,
-        tid: number,
-        year: number,
-        pot: number,
-        ovr: number,
-    },
-    ratings: [],
-    injury: PLAYER_INJURY,
-    injuries: [],
-    jerseyNo: number,
-    stats: [],
-    weight: number,
-    height: number
-}
-
 export const PLAYER_CONTRACT = {
     amountPerYear: number,
     length: number,
@@ -84,64 +55,6 @@ export const PLAYER_INJURY = {
     gamesRemaining: number,
     type: string,
     severity: "Minor" | "Major" | "Career Ending"
-}
-
-export const TEAM = {
-    tid: number,
-    cid: number,
-    did: number,
-    region: string,
-    name: string,
-    abbrev: string,
-    imgURL: string,
-    budget: {
-        ticketPrice: BudgetItem,
-        scouting: BudgetItem,
-        coaching: BudgetItem,
-        health: BudgetItem,
-        facilities: BudgetItem,
-    },
-    strategy: "contending" | "rebuilding",
-    colors: [string, string, string],
-    jersey: string,
-    pop: number,
-    stadiumCapacity: number,
-    retiredJerseyNumbers: [{
-        number: number,
-        seasonRetired: number,
-        seasonTeamInfo: number,
-        pid: number,
-        score: number,
-        text: string
-    }],
-    depth: {
-        QB: [],
-        RB: [],
-        FB: [],
-        WR: [],
-        TE: [],
-        LT: [],
-        LG: [],
-        C: [],
-        RG: [],
-        RT: [],
-        DT: [],
-        LE: [],
-        RE: [],
-        OLB: [],
-        MLB: [],
-        CB: [],
-        FS: [],
-        SS: [],
-        K: [],
-        P: [],
-        KR: [],
-        PR: [],
-    },
-    seasons: [],
-    won: number,
-    lost: number,
-    tied: number,
 }
 
 export const BudgetItem = {
@@ -797,3 +710,89 @@ export const DEFAULT_ATTRIBUTES = {
     userTid: null
 }
 
+export const PLAYER = {
+    pid: number,
+    firstName: string,
+    lastName: string,
+    born: {
+        year: number,
+        loc: string
+    },
+    college: string,
+    pos: string,
+    tid: number,
+    contract: PLAYER_CONTRACT,
+    draft: {
+        round: number,
+        pick: number,
+        tid: number,
+        year: number,
+        pot: number,
+        ovr: number,
+    },
+    ratings: [],
+    injury: PLAYER_INJURY,
+    injuries: [],
+    jerseyNo: number,
+    stats: [],
+    weight: number,
+    height: number
+}
+
+export const TEAM = {
+    tid: number,
+    cid: number,
+    did: number,
+    region: string,
+    name: string,
+    abbrev: string,
+    imgURL: string,
+    budget: {
+        ticketPrice: BudgetItem,
+        scouting: BudgetItem,
+        coaching: BudgetItem,
+        health: BudgetItem,
+        facilities: BudgetItem,
+    },
+    strategy: "contending" | "rebuilding",
+    colors: [string, string, string],
+    jersey: string,
+    pop: number,
+    stadiumCapacity: number,
+    retiredJerseyNumbers: [{
+        number: number,
+        seasonRetired: number,
+        seasonTeamInfo: number,
+        pid: number,
+        score: number,
+        text: string
+    }],
+    depth: {
+        QB: [],
+        RB: [],
+        FB: [],
+        WR: [],
+        TE: [],
+        LT: [],
+        LG: [],
+        C: [],
+        RG: [],
+        RT: [],
+        DT: [],
+        LE: [],
+        RE: [],
+        OLB: [],
+        MLB: [],
+        CB: [],
+        FS: [],
+        SS: [],
+        K: [],
+        P: [],
+        KR: [],
+        PR: [],
+    },
+    seasons: [],
+    won: number,
+    lost: number,
+    tied: number,
+}

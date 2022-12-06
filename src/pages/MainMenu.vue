@@ -162,7 +162,7 @@
 
 <script>
 import { Dexie } from 'dexie';
-import { InitNewCareer } from "@/data/db";
+import { initNewCareer, saveGame } from "@/database/index";
 
 export default {
     data() {
@@ -258,8 +258,10 @@ export default {
             this.exp = this.coach.exp;
         },
         async initGameData() {
-            console.log("Initializing game data....")
+            console.log("Initializing database....")
             let obj = this
+
+            // get existing databases
             let databases = await Dexie.getDatabaseNames();
 
             // create user object
@@ -273,8 +275,13 @@ export default {
             // only allow 3 saves total
             if(databases.length < 3) {
                 try {
+
+                    // create DB name
                     let dbName = obj.firstName + " " + obj.lastName
-                    obj.db = InitNewCareer(dbName, player)
+
+                    // Call function that inits database and returns database
+                    obj.db = initNewCareer(dbName, player)
+
                 } catch (error) {
                     console.error('' + error);
                 } finally {
@@ -311,18 +318,19 @@ export default {
                 } else {
                     // At least one database to dump
                     dump(databaseNames);
-                    console.log("Dumping data...");
+                    console.log("Dumping database...");
                 }
 
                 function dump(databaseNames) {
                     if (databaseNames.length > 0) {
                         obj.data = new Dexie(databaseNames[0]);
+
                         // Now, open database without specifying any version. This will make the database open any existing database and read its schema automatically.
                         obj.data.open().then(function () {
                             obj.existing_db_names.push(obj.data.name)
                             obj.data.tables.forEach(function (table, i) {
-                                var primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
-                                var schemaSyntax = primKeyAndIndexes.map(function (index) { return index.src; }).join(',');
+                                let primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
+                                let schemaSyntax = primKeyAndIndexes.map(function (index) { return index.src; }).join(',');
                             });
                         }).finally(function () {
                             obj.data.close();
@@ -343,20 +351,23 @@ export default {
             obj.restartTimer();
 
             console.log("DB: " + db_name)
-            // restoreState();
             const db = new Dexie(db_name);
+
+            // if for some reason, idk how, the db doesnt exist
             if (!(await Dexie.exists(db.name))) {
                 console.log("Db does not exist");
                 db.version(1).stores({});
             }
+
+            // open database
             await db.open()
             console.log("Loaded: " + db.name);
 
+            // assign to database to vuex store
             obj.teams = await db.table('teams').toArray();
             obj.players = await db.table('players').toArray();
             obj.user = await db.table('user').toArray();
             obj.world = await db.table('world').toArray();
-
             obj.user = obj.user[0];
             obj.world = obj.world[0];
 

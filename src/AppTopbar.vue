@@ -145,7 +145,7 @@
                 <h5>Saving...</h5>
                 <div class="grid">
                     <div class="col">
-                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                        <ProgressBar :value="value1" show-progress variant="success" mode="determinate" :showValue="false"> Percent Complete: {{value1}}% </ProgressBar>
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@
 <script>
 import moment from 'moment';
 import AppMenu from "./AppMenu";
-import { SaveGame } from "@/data/db";
+import { saveGame } from '@/database/index'
 
 export default {
     name: "AppTopbar",
@@ -192,6 +192,8 @@ export default {
             interval: null,
             loading: false,
             exiting: false,
+            finish_saving: false,
+            save_count: 0
         };
     },
     watch: {
@@ -220,7 +222,7 @@ export default {
         getTomorrow: function(date) {
             let obj = this
             let new_date = moment(obj.getHumanDate(date)).add(1,'days');
-            return new_date._d;
+            return new_date;
         },
         continueToTomorrow: function(date) {
             let obj = this
@@ -262,7 +264,7 @@ export default {
         },
         onSaveMenuButtonClick() {
             let obj = this
-            SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world))
+            saveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world))
             obj.openSave()
         },
         onRightMenuClick(event) {
@@ -281,7 +283,7 @@ export default {
         startProgress(timer) {
             let obj = this
             obj.interval = setInterval(() => {
-                let newValue = obj.value1 + Math.floor(Math.random() * 10) + 1;
+                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
                 if (newValue >= 200) {
                     obj.value1 = 100;
                     return;
@@ -299,15 +301,15 @@ export default {
         openContinue() {
             this.loadingDialog = true;
             this.continueToTomorrow(this.world.date);
-            this.restartTimer(500);
+            this.restartTimer(150);
         },
         openSave() {
             this.savingDialog = true;
-            this.restartTimer(1500);
+            this.restartTimer(200);
         },
         openExit() {
             this.exitDialog = true;
-            this.restartTimer(500);
+            this.restartTimer(400);
         },
         hideDialog() {
             this.loadingDialog = false;
@@ -318,7 +320,7 @@ export default {
                 this.$router.push('/')
                 this.exiting = false
             }
-        }
+        },
     },
     computed: {
         players: {

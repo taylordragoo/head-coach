@@ -99,7 +99,7 @@
                                     <i class="stat-detail-icon icon-arrow-right-circle"></i>
                                     <img src="demo/images/dashboard/graph-completed.svg" alt="diamond-vue" />
                                 </div>
-                                <div class="order-tab order-tab-refunded col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);" 
+                                <div class="order-tab order-tab-refunded col-6 md:col-3" @click="changeDataset($event); refreshDataset($event);"
                                         data-label="Refunded Orders" data-index="2" data-stroke="#B2DFDB" data-fill="rgba(224, 242, 241, 0.5)">
                                     <i class="pi pi-refresh"></i>
                                     <span class="order-label">Refunded</span>
@@ -440,9 +440,9 @@ export default {
             ];
 
             this.ordersChart.datasets[0].data = dataSet[parseInt(event.currentTarget.getAttribute('data-index'))];
-            this.ordersChart.datasets[0].label = event.currentTarget.getAttribute('data-label');
-            this.ordersChart.datasets[0].borderColor = event.currentTarget.getAttribute('data-stroke');
-            this.ordersChart.datasets[0].backgroundColor = event.currentTarget.getAttribute('data-fill');
+            this.ordersChart.datasets[0].label = event.currentTarget.getAttribute('database-label');
+            this.ordersChart.datasets[0].borderColor = event.currentTarget.getAttribute('database-stroke');
+            this.ordersChart.datasets[0].backgroundColor = event.currentTarget.getAttribute('database-fill');
         },
 
         recentSales($event) {
