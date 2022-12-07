@@ -8,7 +8,7 @@
 
             <div class="layout-breadcrumb viewname" style="text-transform: uppercase">
                 <template v-if="$route.meta.breadcrumb">
-                    <span>{{ this.$store.state.sUser.first + ' ' + this.$store.state.sUser.last }}</span>
+                    <span>{{ user.first + ' ' + user.last }}</span>
                 </template>
             </div>
 
@@ -168,6 +168,10 @@
 import moment from 'moment';
 import AppMenu from "./AppMenu";
 import { saveGame } from '@/database/index'
+import User from '@/models/User';
+import Team from '@/models/Team';
+import Player from '@/models/Player';
+import World from '@/models/World';
 
 export default {
     name: "AppTopbar",
@@ -210,11 +214,6 @@ export default {
     components: {
         AppMenu
     },
-    unmounted() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
-    },
     methods: {
         getHumanDate: function(date) {
             return moment(date).format('MM/DD/YYYY');
@@ -227,7 +226,7 @@ export default {
         continueToTomorrow: function(date) {
             let obj = this
             obj.world.date = obj.getHumanDate(obj.getTomorrow(date))
-            // SaveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world));
+            obj.user.first = "Ted"
         },
         onMenuClick(event) {
             this.$emit("menu-click", event);
@@ -285,6 +284,9 @@ export default {
             obj.interval = setInterval(() => {
                 let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
                 if (newValue >= 200) {
+                    if(this.loadingDialog) {
+                        this.continueToTomorrow(this.world.date);
+                    }
                     obj.value1 = 100;
                     return;
                 }
@@ -300,8 +302,8 @@ export default {
         },
         openContinue() {
             this.loadingDialog = true;
-            this.continueToTomorrow(this.world.date);
-            this.restartTimer(150);
+            // this.continueToTomorrow(this.world.date);
+            this.restartTimer(200);
         },
         openSave() {
             this.savingDialog = true;
@@ -312,6 +314,7 @@ export default {
             this.restartTimer(400);
         },
         hideDialog() {
+
             this.loadingDialog = false;
             this.savingDialog = false;
             this.exitDialog = false;
@@ -326,7 +329,7 @@ export default {
         players: {
             /* By default get() is used */
             get() {
-                return this.$store.state.sPlayers
+                return Player.all()
             },
             /* We add a setter */
             set(value) {
@@ -336,7 +339,7 @@ export default {
         teams: {
             /* By default get() is used */
             get() {
-                return this.$store.state.sTeams
+                return Team.all()
             },
             /* We add a setter */
             set(value) {
@@ -346,7 +349,7 @@ export default {
         user: {
             /* By default get() is used */
             get() {
-                return this.$store.state.sUser
+                return User.query().first()
             },
             /* We add a setter */
             set(value) {
@@ -356,7 +359,7 @@ export default {
         world: {
             /* By default get() is used */
             get() {
-                return this.$store.state.sWorld
+                return World.query().first()
             },
             /* We add a setter */
             set(value) {

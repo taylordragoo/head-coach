@@ -17,7 +17,6 @@ export function saveGame(d, p, t, u, w) {
         teams: "++id, utid, cid, did, region, name, abbrev, imgURL, budget, strategy, colors, jersey, pop, stadiumCapacity, seasons, stats",
         players: "++id, firstName, lastName, born, college, pos, tid, contract, draft, ratings, injury, injuries, jerseyNo, stats, value, valuePot, weight, height",
         world: '++id, phase, date, confs, divs, lid, numGames, numGamesDiv, numGamesConf, season, userTid',
-        phase: '++id, phase',
     });
 
     db.version(2).stores({});
@@ -43,7 +42,7 @@ export function saveGame(d, p, t, u, w) {
             console.error ("Some teams did not succeed. However, " +
                 100000-e.failures.length + " teams was added successfully");
         });
-
+        console.log(objUser)
         db.user.put(objUser).then(function(lastKey) {
             console.log("Last user's id was: " + lastKey); // Will be 100000.
         }).catch(Dexie.BulkError, function (e) {

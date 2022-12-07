@@ -120,6 +120,7 @@
 
 <script>
 import moment from 'moment';
+import World from '@/models/World';
 
 export default {
     data() {
@@ -170,7 +171,7 @@ export default {
         world: {
             /* By default get() is used */
             get() {
-                return this.$store.state.sWorld
+                return World.query().first()
             },
             /* We add a setter */
             set(value) {

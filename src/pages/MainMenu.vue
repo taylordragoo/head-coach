@@ -163,6 +163,11 @@
 <script>
 import { Dexie } from 'dexie';
 import { initNewCareer, saveGame } from "@/database/index";
+import User from '@/models/User';
+import Team from '@/models/Team';
+import Player from '@/models/Player';
+import World from '@/models/World';
+import League from '@/models/League';
 
 export default {
     data() {
@@ -184,6 +189,9 @@ export default {
                 {label: 'Hall Of Fame', value: 4 }
             ]
         }
+    },
+    mounted() {
+      this.$store.dispatch('resetState')
     },
     watch: {
         value1() {
@@ -272,15 +280,67 @@ export default {
                 _exp: obj.coach.exp.label
             }
 
+            await User.create({
+                data: {
+                    id: 0,
+                    first: obj.firstName,
+                    last: obj.lastName,
+                    age: obj.age,
+                    exp: obj.coach.exp.label,
+                    team_id: 0,
+                    wid: 0,
+                }
+            })
+
+            await League.create({
+                data: {
+                    id: 0,
+                    name: "NFL"
+                }
+            })
+
+            await Team.create({
+                data: {
+                    id: 0,
+                    name: "Denver Broncos",
+                    user_id: 0,
+                    lid: 0
+                }
+            })
+
+            await Player.create({
+                data: {
+                    first: "Matt",
+                    last: "Ryan",
+                    age: 38,
+                    exp: 15,
+                    ptid: 0
+                },
+            })
+
+            await World.create({
+                data: {
+                    date: '07/01/2022',
+                    phase: 1,
+                    season: 1
+                }
+            })
+
             // only allow 3 saves total
             if(databases.length < 3) {
                 try {
-
                     // create DB name
                     let dbName = obj.firstName + " " + obj.lastName
+                    const user = User.query().first()
+                    const world = World.query().first()
+                    const players = Player.all()
+                    const teams = Team.all()
+                    const leagues = League.all()
+                    const user_json = user.$toJson()
+                    const world_json = world.$toJson()
 
                     // Call function that inits database and returns database
-                    obj.db = initNewCareer(dbName, player)
+                    obj.db = initNewCareer(dbName, user_json, world_json, teams, players, leagues)
 
                 } catch (error) {
                     console.error('' + error);
@@ -291,15 +351,17 @@ export default {
                     obj.loadingDialog = true;
                     obj.restartTimer();
 
-                    // load all objects from database as arrays as that is what vuex likes
-                    obj.teams = await obj.db.table('teams').toArray();
-                    obj.players = await obj.db.table('players').toArray();
-                    obj.world = await obj.db.table('world').toArray();
-                    obj.user = await obj.db.table('user').toArray();
+                    // // load all objects from database as arrays as that is what vuex likes
+                    // obj.teams = await obj.db.table('teams').toArray();
+                    // obj.players = await obj.db.table('players').toArray();
+                    // obj.world = await obj.db.table('world').toArray();
+
+                    // let user = new User()
+                    // user = await obj.db.table('user');
 
                     // should only be one object in this array, get it.
-                    obj.user = obj.user[0];
-                    obj.world = obj.world[0];
+                    // obj.user = obj.user[0];
+                    // obj.world = obj.world[0];
                 }
             } else {
                 console.log('too many saves')

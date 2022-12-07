@@ -700,12 +700,6 @@ export const COMPOSITE_WEIGHTS = {
 export const DEFAULT_ATTRIBUTES = {
     phase: 1,
     date: '07/01/2022',
-    confs: DEFAULT_CONFS,
-    divs: DEFAULT_DIVS,
-    lid: 1,
-    numGames: 16,
-    numGamesDiv: 8,
-    numGamesConf: 12,
     season: 1,
     userTid: null
 }
