@@ -1,5 +1,4 @@
 import { Model } from '@vuex-orm/core'
-import Team from '@/models/Team';
 
 export default class Player extends Model {
     static entity = 'player'
@@ -10,7 +9,8 @@ export default class Player extends Model {
             last: this.string(''),
             age: this.number(0),
             exp: this.string(''),
-            ptid: this.attr(null)
+            pos: this.string(''),
+            ptid: this.number(null)
         }
     }
 }

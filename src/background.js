@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, globalShortcut, Menu } from 'electron'
+import { app, protocol, BrowserWindow, globalShortcut, Menu, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -17,6 +17,7 @@ async function createWindow() {
     width: 800,
     height: 600,
     frame: true,
+    fullscreen: true,
     autoHideMenuBar: true,
     menu: null,
     webPreferences: {
@@ -70,6 +71,8 @@ app.on('ready', async () => {
   }
   createWindow()
 })
+
+// app.on('page-reload', BrowserWindow.webContents.reloadIgnoringCache)
 
 // app.whenReady().then(() => {
 //   globalShortcut.register("CommandOrControl+R", () => {

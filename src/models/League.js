@@ -7,7 +7,9 @@ export default class League extends Model {
         return {
             id: this.attr(null),
             name: this.attr(''),
-            teams: this.hasMany(Team, 'lid')
+            wid: this.attr(null),
+            teams: this.hasMany(Team, 'lid'),
+            phase: this.number(0)
         }
     }
 }

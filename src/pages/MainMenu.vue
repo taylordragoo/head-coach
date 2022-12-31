@@ -57,8 +57,11 @@
             <div class="login-panel">
                 <div class="row"></div>
                 <div class="col-sm-12">
-                    <div class='row'>
-                        <Button type="button" @click='loadDbData' label="Continue" style="width:20rem" class="mb-2" />
+                    <div v-if='this.databases.length > 0' class='row'>
+                        <Button type="button" @click='openContinue' label="Continue" style="width:20rem" class="mb-2" />
+                    </div>
+                    <div v-else>
+
                     </div>
                     <div class='row'>
                         <Button type="button" @click="openNew" label="New" style="width:20rem" class="mb-2"/>
@@ -81,26 +84,26 @@
             <div class='formgrid grid'>
                 <div class="field col">
                     <label >First Name</label>
-                    <InputText id="name" v-model='firstName' required="true" autofocus :class="{'p-invalid': submitted && !coach.firstName}" />
-                    <small class="p-invalid" v-if="submitted && !coach.firstName">First Name is required.</small>
+                    <InputText id="name" v-model='first_name' required="true" autofocus :class="{'p-invalid': submitted && !first_name}" />
+                    <small class="p-invalid" v-if="submitted && !first_name">First Name is required.</small>
                 </div>
                 <div class="field col">
                     <label>Last Name</label>
-                    <InputText id="name" v-model="lastName" required="true" autofocus :class="{'p-invalid': submitted && !coach.lastName}" />
-                    <small class="p-invalid" v-if="submitted && !coach.lastName">Last Name is required.</small>
+                    <InputText id="name" v-model="last_name" required="true" autofocus :class="{'p-invalid': submitted && !last_name}" />
+                    <small class="p-invalid" v-if="submitted && !last_name">Last Name is required.</small>
                 </div>
             </div>
 
             <div class="formgrid grid">
                 <div class="field col">
                     <label>Age</label>
-                    <InputNumber id="age" v-model="age" required="true" autofocus :class="{'p-invalid': submitted && !coach.age}" />
-                    <small class="p-invalid" v-if="submitted && !coach.age">Age is required.</small>
+                    <InputNumber id="age" v-model="age" required="true" autofocus :class="{'p-invalid': submitted && !age}" />
+                    <small class="p-invalid" v-if="submitted && !age">Age is required.</small>
                 </div>
 
                 <div class="field col">
                     <label>Playing Experience</label>
-                    <Dropdown id="inventoryStatus" v-model='coach.exp' @change='updateExp' :options="statuses" optionLabel="label" placeholder="Past playing experience...">
+                    <Dropdown id="inventoryStatus" v-model='exp' :options="statuses" optionLabel="label" placeholder="Past playing experience...">
                         <template>
                             <div>{{statuses.label}}</div>
                         </template>
@@ -108,9 +111,21 @@
                 </div>
             </div>
 
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>Team Selection</label>
+                    <Dropdown id="inventoryStatus" v-model='team' :options="teams" optionLabel="name" placeholder="Select a team..."></Dropdown>
+                </div>
+
+                <div class="field col">
+                    <label>Skillset</label>
+                    <Dropdown id="inventoryStatus" v-model='skill' :options="skills" optionLabel="skill" placeholder="Choose your skillset..."></Dropdown>
+                </div>
+            </div>
+
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
-                <Button label="Create" icon="pi pi-check" class="p-button-text" @click="initGameData" />
+                <Button label="Create" icon="pi pi-check" class="p-button-text" @click="createNewCareer" />
             </template>
         </Dialog>
 
@@ -118,7 +133,7 @@
             <div class="row">
                 <div class="col-md-2">
                 </div>
-                <div class="col-md-1" v-for='save in existing_db_names'>
+                <div class="col-md-1" v-for='save in databases'>
                     <div class="p-fluid">
                         <h5>{{ save }}</h5>
                         <div class="field grid">
@@ -135,8 +150,11 @@
                         </div>
                         <div class="field grid">
                             <label class="col-12 mb-2 md:col-2 md:mb-0"> </label>
-                            <div class="col-12 md:col-10">
-                                <Button type="button" to='/dashboard' @click='loadSelectedCareer(save)' :label="save" class="mb-2" />
+                            <div class="col-12 md:col-8">
+                                <Button type="button" to='/dashboard' @click='loadSelectedCareer(save)' label="Continue Save" class="mb-2" />
+                            </div>
+                            <div class="col-12 md:col-2">
+                                <Button type="button" to='/dashboard' @click='deleteSelectedCareer(save)' label="Delete" class="mb-2 p-button-danger" />
                             </div>
                         </div>
                     </div>
@@ -162,89 +180,73 @@
 
 <script>
 import { Dexie } from 'dexie';
-import { initNewCareer, saveGame } from "@/database/index";
+import { initNewCareer } from "@/database/index";
 import User from '@/models/User';
 import Team from '@/models/Team';
 import Player from '@/models/Player';
 import World from '@/models/World';
 import League from '@/models/League';
+import { UserController, TeamController }  from '@/controllers/index';
+
 
 export default {
     data() {
         return {
+            first_name: '',
+            last_name: '',
+            age: null,
+            exp: '',
+            team: null,
+            skill: null,
+            teams: null,
+            value1: 0,
+            db: null,
+            databases: [],
+            existing_db_names: [],
+            interval: null,
+            loading: false,
+            deleting: false,
+            creating: false,
             coachDialog: false,
             continueDialog: false,
             loadingDialog: false,
-            coach: {},
-            existing_db_names: [],
-            value1: 0,
-            db: null,
-            interval: null,
-            loading: false,
             statuses: [
                 {label: 'None', value: 0 },
                 {label: 'High School', value: 1 },
                 {label: 'College', value: 2 },
                 {label: 'Professional', value: 3 },
                 {label: 'Hall Of Fame', value: 4 }
-            ]
+            ],
+            skills: [
+                { value: 0, skill: "Team Builder" },
+                { value: 1, skill: "Staff Builder" },
+                { value: 2, skill: "Youth Specialist" },
+            ],
+            userController: null,
+            worldController: null,
+            leagueController: null,
+            teamController: null,
+            playerController: null
         }
     },
+    created() {
+        this.userController = new UserController()
+        this.teamController = new TeamController()
+    },
     mounted() {
-      this.$store.dispatch('resetState')
+        this.$store.dispatch('resetState')
+        this.checkForData()
+        this.teams = this.teamController.getTeamsDefault()
     },
     watch: {
         value1() {
             let obj = this
-            if(obj.value1 == 100) {
-                obj.loadingDialog = false
+            if(obj.value1 > 100) {
+                obj.loading = false
                 obj.endProgress();
                 console.log("Loading over")
-                obj.$router.push('dashboard')
             }
         }
-    },
-    computed: {
-        teams: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sTeams
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateTeams', value)
-            }
-        },
-        players: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sPlayers
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updatePlayers', value)
-            }
-        },
-        user: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sUser
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateUser', value)
-            }
-        },
-        world: {
-            /* By default get() is used */
-            get() {
-                return this.$store.state.sWorld
-            },
-            /* We add a setter */
-            set(value) {
-                this.$store.commit('updateWorld', value)
-            }
-        },
     },
     methods: {
         openNew() {
@@ -260,77 +262,56 @@ export default {
         hideDialog() {
             this.coachDialog = false;
             this.continueDialog = false;
+            this.loadingDialog = false;
             this.submitted = false;
+
+            if(this.creating) {
+                this.$router.push('dashboard')
+                this.creating = false
+            }
+
+            if(this.deleting) {
+                this.$router.push('/')
+                this.deleting = false
+            }
         },
-        updateExp() {
-            this.exp = this.coach.exp;
-        },
-        async initGameData() {
+        async checkForData() {
             console.log("Initializing database....")
             let obj = this
 
             // get existing databases
-            let databases = await Dexie.getDatabaseNames();
+            obj.databases = await Dexie.getDatabaseNames();
+        },
+        async createNewCareer() {
+            let obj = this
+            obj.coachDialog = false
+            obj.loadingDialog = true;
+            obj.creating = true
+            obj.restartTimer();
+            await obj.initNewCareerData()
+        },
+        async initNewCareerData() {
+            console.log("Seeding database....")
+            let obj = this
 
-            // create user object
-            let player = {
-                _first: obj.firstName,
-                _last: obj.lastName,
-                _age: obj.age,
-                _exp: obj.coach.exp.label
+            let create_user = {
+                id: 0,
+                first: obj.first_name,
+                last: obj.last_name,
+                age: obj.age,
+                exp: obj.exp.label,
+                skill: obj.skill,
+                team_id: obj.team.tid
             }
 
-            await User.create({
-                data: {
-                    id: 0,
-                    first: obj.firstName,
-                    last: obj.lastName,
-                    age: obj.age,
-                    exp: obj.coach.exp.label,
-                    team_id: 0,
-                    wid: 0,
-                }
-            })
-
-            await League.create({
-                data: {
-                    id: 0,
-                    name: "NFL"
-                }
-            })
-
-            await Team.create({
-                data: {
-                    id: 0,
-                    name: "Denver Broncos",
-                    user_id: 0,
-                    lid: 0
-                }
-            })
-
-            await Player.create({
-                data: {
-                    first: "Matt",
-                    last: "Ryan",
-                    age: 38,
-                    exp: 15,
-                    ptid: 0
-                },
-            })
-
-            await World.create({
-                data: {
-                    date: '07/01/2022',
-                    phase: 1,
-                    season: 1
-                }
-            })
+            this.userController.create(create_user)
 
             // only allow 3 saves total
-            if(databases.length < 3) {
+            if(obj.databases.length < 3) {
                 try {
+                    console.log("Creating Database")
                     // create DB name
-                    let dbName = obj.firstName + " " + obj.lastName
+                    let db_name = create_user.first + " " + create_user.last
                     const user = User.query().first()
                     const world = World.query().first()
                     const players = Player.all()
@@ -340,82 +321,27 @@ export default {
                     const world_json = world.$toJson()
 
                     // Call function that inits database and returns database
-                    obj.db = initNewCareer(dbName, user_json, world_json, teams, players, leagues)
+                    obj.db = initNewCareer(db_name, user_json, world_json, teams, players, leagues)
 
                 } catch (error) {
                     console.error('' + error);
                 } finally {
                     console.log(obj.db)
-
-                    obj.coachDialog = false
-                    obj.loadingDialog = true;
-                    obj.restartTimer();
-
-                    // // load all objects from database as arrays as that is what vuex likes
-                    // obj.teams = await obj.db.table('teams').toArray();
-                    // obj.players = await obj.db.table('players').toArray();
-                    // obj.world = await obj.db.table('world').toArray();
-
-                    // let user = new User()
-                    // user = await obj.db.table('user');
-
-                    // should only be one object in this array, get it.
-                    // obj.user = obj.user[0];
-                    // obj.world = obj.world[0];
                 }
             } else {
                 console.log('too many saves')
             }
         },
-        async loadDbData() {
-            let obj = this
-            obj.existing_db_names = []
-            this.openContinue()
-            console.log("Dumping Databases");
-            console.log("=================");
-            await Dexie.getDatabaseNames(function (databaseNames) {
-                if (databaseNames.length === 0) {
-                    // No databases at this origin as we know of.
-                    console.log("Could not find databases on current origin.");
-                } else {
-                    // At least one database to dump
-                    dump(databaseNames);
-                    console.log("Dumping database...");
-                }
-
-                function dump(databaseNames) {
-                    if (databaseNames.length > 0) {
-                        obj.data = new Dexie(databaseNames[0]);
-
-                        // Now, open database without specifying any version. This will make the database open any existing database and read its schema automatically.
-                        obj.data.open().then(function () {
-                            obj.existing_db_names.push(obj.data.name)
-                            obj.data.tables.forEach(function (table, i) {
-                                let primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
-                                let schemaSyntax = primKeyAndIndexes.map(function (index) { return index.src; }).join(',');
-                            });
-                        }).finally(function () {
-                            obj.data.close();
-                            dump(databaseNames.slice(1));
-                        });;
-                    } else {
-                        console.log("Finished dumping databases");
-                    }
-                }
-            });
-        },
         async loadSelectedCareer(name) {
             let obj = this
             let db_name = name;
 
-            obj.continueDialog = false
-            obj.loadingDialog = true;
             obj.restartTimer();
 
             console.log("DB: " + db_name)
             const db = new Dexie(db_name);
 
-            // if for some reason, idk how, the db doesnt exist
+            // if for some reason, IDK how, the db it loaded, doesn't actually exist
             if (!(await Dexie.exists(db.name))) {
                 console.log("Db does not exist");
                 db.version(1).stores({});
@@ -423,15 +349,20 @@ export default {
 
             // open database
             await db.open()
-            console.log("Loaded: " + db.name);
 
-            // assign to database to vuex store
-            obj.teams = await db.table('teams').toArray();
-            obj.players = await db.table('players').toArray();
-            obj.user = await db.table('user').toArray();
-            obj.world = await db.table('world').toArray();
-            obj.user = obj.user[0];
-            obj.world = obj.world[0];
+            // get data from indexeddb via dexie
+            const team = await db.table('teams').toArray();
+            const player = await db.table('players').toArray();
+            const user = await db.table('user').toArray();
+            const world = await db.table('world').toArray();
+            const league = await db.table('leagues').toArray();
+
+            // insert data into vuex-orm store
+            await Team.insert({ data: team })
+            await User.insert({ data: user })
+            await Player.insert({ data: player })
+            await League.insert({ data: league })
+            await World.insert({ data: world })
 
         },
         restartTimer() {
@@ -442,23 +373,39 @@ export default {
             }, 100);
         },
         startProgress() {
-            let obj = this
-            obj.interval = setInterval(() => {
-                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
-                if (newValue >= 200) {
-                    obj.value1 = 100;
-                    return;
-                }
+            this.continueDialog = false
+            this.coachDialog = false
+            this.loadingDialog = true
+            this.interval = setInterval(() => {
+                let newValue = this.value1 + Math.floor(Math.random() * 10) + 1;
+                // if (newValue >= 100) {
+                //     newValue = 100;
+                // }
                 this.value1 = newValue;
-            }, 750);
+                console.log(this.value1);
+            }, 500);
         },
         endProgress() {
-            console.log('ending loading')
-            let obj = this
-            clearInterval(obj.interval);
-            obj.interval = null;
-            obj.loadingDialog = false;
+            clearInterval(this.interval);
+            this.interval = null;
+            setTimeout(() => {
+                this.hideDialog()
+            }, 2000);
         },
+        deleteSelectedCareer(db) {
+            let obj = this
+            obj.deleting = true
+            obj.restartTimer();
+            console.log("Deleting database...")
+            Dexie.delete(db).then(() => {
+                console.log("Database successfully deleted");
+            }).catch((err) => {
+                console.error("Could not delete database");
+            }).finally(() => {
+                this.checkForData()
+            });
+        }
+
     }
 }
 </script>

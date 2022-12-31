@@ -8,11 +8,20 @@ const routes = [
     },
     {
         path: '/dashboard',
-        name: 'career dashboard',
+        name: 'Home',
         exact: true,
-        component: () => import('./components/CareerDashboard'),
+        component: () => import('./components/Home'),
         meta: {
-            breadcrumb: [{ parent: 'Dashboard', label: 'Career Dashboard' }],
+            breadcrumb: [{ parent: 'Home', label: 'Home' }],
+        },
+    },
+    {
+        path: '/inbox',
+        name: 'Inbox',
+        exact: true,
+        component: () => import('./components/Inbox'),
+        meta: {
+            breadcrumb: [{ parent: 'Inbox', label: 'Inbox' }],
         },
     },
     {

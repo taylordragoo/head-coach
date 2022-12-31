@@ -7,11 +7,19 @@ export default class Team extends Model {
     static fields () {
         return {
             id: this.attr(null),
+            tid: this.attr(null),
+            cid: this.attr(null),
+            did: this.attr(null),
+            region: this.attr(''),
             name: this.attr(''),
+            abbrev: this.attr(''),
+            pop: this.attr(null),
             lid: this.attr(''),
-            user_id: this.attr(''),
-            user: this.belongsTo(User, 'user_id'),
             players: this.hasMany(Player, 'ptid')
         }
+    }
+
+    get full_name () {
+        return `${this.region} ${this.name}`
     }
 }

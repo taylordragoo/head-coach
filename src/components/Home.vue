@@ -4,15 +4,14 @@
             <div class="col-12 md:col-6 xl:col-3">
                 <div class="card grid-nogutter widget-overview-box widget-overview-box-1">
                     <div class="grid overview-detail">
-                        <div class="col-12">
-                            <div v-if='world != null' class="overview-number" type='text'>{{ getHumanDate(world.date) }}</div>
-                            <div v-else></div>
-                            <div class="overview-subtext">Date</div>
+                        <div class="col-6">
+                            <div class="overview-number">$2,100</div>
+                            <div class="overview-subtext">Expenses</div>
                         </div>
-<!--                        <div class="col-6">-->
-<!--                            <div class="overview-number">$9,640</div>-->
-<!--                            <div class="overview-subtext">Income</div>-->
-<!--                        </div>-->
+                        <div class="col-6">
+                            <div class="overview-number">$9,640</div>
+                            <div class="overview-subtext">Income</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,7 +61,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Players</h4>
-                        <Dropdown :options="teams" v-model="selectedTeam" optionLabel="name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
+                        <Dropdown :options="teams" v-model="selectedTeam" optionLabel="full_name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
                     </div>
                     <p>Your sales activity over time.</p>
                     <DataTable v-if='selectedTeam != null' :value="selectedTeam.players" :paginator="true" :rows="20" responsiveLayout="scroll">
@@ -125,7 +124,7 @@ export default {
         teams: {
             /* By default get() is used */
             get() {
-                return Team.query().with('players').orderBy('name').all()
+                return Team.query().with('players').orderBy('region').all()
             },
             /* We add a setter */
             set(value) {
@@ -135,7 +134,7 @@ export default {
         user: {
             /* By default get() is used */
             get() {
-                return User.query().with('team').with('world').first()
+                return User.query().with('team.players').with('world').first()
             },
             /* We add a setter */
             set(value) {
@@ -210,6 +209,9 @@ export default {
             });
         },
     },
+    mounted() {
+        this.selectedTeam = this.teams.find(e => e.tid === this.user.team_id)
+    }
 };
 </script>
 

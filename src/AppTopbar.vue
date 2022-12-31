@@ -6,17 +6,20 @@
                 <img id="logo-horizontal" class="horizontal-logo" src="layout/images/logo-white.svg" alt="diamond-layout" />
             </router-link>
 
-            <div class="layout-breadcrumb viewname" style="text-transform: uppercase">
+            <div v-if='user != null' class="layout-breadcrumb viewname" style="text-transform: uppercase">
                 <template v-if="$route.meta.breadcrumb">
-                    <span>{{ user.first + ' ' + user.last }}</span>
+                    <span>{{ $route.name + " | " + user.full_name + " | " + world.date }}</span>
                 </template>
+            </div>
+
+            <div v-else  class="layout-breadcrumb viewname" style="text-transform: uppercase">
+
             </div>
 
             <img id="logo-mobile" class="mobile-logo" src="layout/images/logo-dark.svg" alt="diamond-layout" />
         </div>
 
-        <AppMenu :model="menu" :layoutMode="layoutMode" :active="menuActive" :mobileMenuActive="staticMenuMobileActive"
-            @menu-click="onMenuClick" @menuitem-click="onMenuItemClick" @root-menuitem-click="onRootMenuItemClick"></AppMenu>
+        <AppMenu :model="menu" :layoutMode="layoutMode" :active="menuActive" :mobileMenuActive="staticMenuMobileActive" @menu-click="onMenuClick" @menuitem-click="onMenuItemClick" @root-menuitem-click="onRootMenuItemClick"></AppMenu>
 
         <div class="layout-mask modal-in"></div>
 
@@ -172,6 +175,7 @@ import User from '@/models/User';
 import Team from '@/models/Team';
 import Player from '@/models/Player';
 import World from '@/models/World';
+import League from '@/models/League';
 
 export default {
     name: "AppTopbar",
@@ -225,8 +229,16 @@ export default {
         },
         continueToTomorrow: function(date) {
             let obj = this
-            obj.world.date = obj.getHumanDate(obj.getTomorrow(date))
-            obj.user.first = "Ted"
+            const new_date = obj.getHumanDate(obj.getTomorrow(date))
+            console.log(new_date)
+            World.update({
+                where: (world) => {
+                    return world.id === 0
+                },
+                data: {
+                    date: new_date
+                }
+            })
         },
         onMenuClick(event) {
             this.$emit("menu-click", event);
@@ -263,7 +275,7 @@ export default {
         },
         onSaveMenuButtonClick() {
             let obj = this
-            saveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world))
+            saveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world), JSON.stringify(obj.league))
             obj.openSave()
         },
         onRightMenuClick(event) {
@@ -272,26 +284,26 @@ export default {
         isMobile() {
             return window.innerWidth <= 1091;
         },
-        restartTimer(timer) {
+        restartTimer() {
             clearInterval(this.interval);
             this.value1 = 0;
             setTimeout(() => {
-                this.startProgress(timer);
+                this.startProgress();
             }, 100);
         },
-        startProgress(timer) {
+        startProgress() {
             let obj = this
             obj.interval = setInterval(() => {
-                let newValue = obj.value1 + Math.floor(Math.random() * 20) + 1;
-                if (newValue >= 200) {
+                let newValue = obj.value1 + Math.floor(Math.random() * 10) + 1;
+                if (newValue >= 100) {
                     if(this.loadingDialog) {
                         this.continueToTomorrow(this.world.date);
                     }
-                    obj.value1 = 100;
-                    return;
+                    newValue = 100;
                 }
                 this.value1 = newValue;
-            }, timer);
+                console.log(this.value1);
+            }, 500);
         },
         endProgress() {
             console.log('ending loading')
@@ -339,7 +351,7 @@ export default {
         teams: {
             /* By default get() is used */
             get() {
-                return Team.all()
+                return Team.query().with('players').all()
             },
             /* We add a setter */
             set(value) {
@@ -349,7 +361,17 @@ export default {
         user: {
             /* By default get() is used */
             get() {
-                return User.query().first()
+                return User.query().with('world').with('team.players').first()
+            },
+            /* We add a setter */
+            set(value) {
+                this.$store.commit('updateUser', value)
+            }
+        },
+        league: {
+            /* By default get() is used */
+            get() {
+                return League.query().with('teams.players').all()
             },
             /* We add a setter */
             set(value) {
@@ -359,7 +381,7 @@ export default {
         world: {
             /* By default get() is used */
             get() {
-                return World.query().first()
+                return World.query().with('leagues.teams.players').first()
             },
             /* We add a setter */
             set(value) {

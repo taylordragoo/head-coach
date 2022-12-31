@@ -59,8 +59,7 @@ export default {
                     icon: "pi pi-fw pi-home",
                     items: [
                         {label: "Home", icon: "pi pi-fw pi-home", to: "/dashboard"},
-                        {label: "Inbox", icon: "pi pi-fw pi-envelope", to: "/dashboard"},
-                        {label: "Profile", icon: "pi pi-fw pi-user", to: "/dashboard"},
+                        {label: "Inbox", icon: "pi pi-fw pi-envelope", to: "/inbox"},
                     ],
                 },
                 { separator: true },
