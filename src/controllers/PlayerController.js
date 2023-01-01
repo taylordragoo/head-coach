@@ -1,13 +1,14 @@
 import Player from '@/models/Player';
 import { name } from 'faker';
 import _ from 'lodash';
+import { PLAYERS, POSITIONS } from '@/data/constants'
 
 export default class PlayerController {
-    create(tid) {
-        const team_id = tid
+    create() {
+        // const team_id = tid
         const positions = this.getPlayerPosDefaults()
-
-        for(let i = 0; i < positions.length; i++) {
+        const p = PLAYERS
+        for(let i = 0; i < p.length; i++) {
             let pAge = _.random(21, 39)
             let pExp = pAge - 21;
 
@@ -15,12 +16,22 @@ export default class PlayerController {
                 data: {
                     first: name.firstName(),
                     last: name.lastName(),
-                    age: pAge,
-                    exp: pExp,
-                    ptid: tid,
-                    pos: positions[i]
+                    ptid: p[i].tid,
+                    born: {
+                        year: p[i].born.year,
+                        location: p[i].born.loc
+                    },
+                    contract: {
+                        amount: p[i].contract.amount,
+                        expires: p[i].contract.exp
+                    },
+                    injury: {
+                        type: p[i].injury.type,
+                        daysRemaining: p[i].injury.gamesRemaining
+                    }
                 }
             })
+            console.log("Player Created");
         }
     }
 

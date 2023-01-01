@@ -378,9 +378,6 @@ export default {
             this.loadingDialog = true
             this.interval = setInterval(() => {
                 let newValue = this.value1 + Math.floor(Math.random() * 10) + 1;
-                // if (newValue >= 100) {
-                //     newValue = 100;
-                // }
                 this.value1 = newValue;
                 console.log(this.value1);
             }, 500);

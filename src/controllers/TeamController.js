@@ -20,9 +20,10 @@ export default class TeamController {
                     lid: 0
                 }
             })
-
-            playerController.create(i)
+            console.log("Team Created");
         }
+
+        playerController.create()
     }
 
     read(obj) {

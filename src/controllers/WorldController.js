@@ -13,7 +13,7 @@ export default class WorldController {
                 season: 1
             }
         })
-
+        console.log("World Created");
         leagueController.create()
     }
 

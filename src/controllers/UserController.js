@@ -17,7 +17,7 @@ export default class UserController {
                 team_id: obj.team_id
             }
         })
-
+        console.log("User Created");
         worldController.create()
     }
 

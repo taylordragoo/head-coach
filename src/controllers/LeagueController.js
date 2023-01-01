@@ -13,7 +13,7 @@ export default class LeagueController {
                 phase: 0
             }
         })
-
+        console.log("League Created");
         teamController.create()
     }
 

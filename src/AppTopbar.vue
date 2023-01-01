@@ -341,7 +341,7 @@ export default {
         players: {
             /* By default get() is used */
             get() {
-                return Player.all()
+                return Player.query().with('born').with('contract').with('injury').all()
             },
             /* We add a setter */
             set(value) {
@@ -391,3 +391,5 @@ export default {
     },
 };
 </script>
+
+
