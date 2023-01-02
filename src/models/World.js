@@ -7,7 +7,7 @@ export default class World extends Model {
         return {
             id: this.attr(null),
             date: this.attr(''),
-            season: this.number(1),
+            season: this.number(null),
             user_id: this.attr(null),
             leagues: this.hasMany(League, 'wid'),
         }

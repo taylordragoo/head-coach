@@ -10,7 +10,7 @@ export default class WorldController {
                 user_id: 0,
                 date: '07/01/2022',
                 phase: 1,
-                season: 1
+                season: 2022
             }
         })
         console.log("World Created");

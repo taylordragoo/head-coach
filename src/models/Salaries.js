@@ -7,7 +7,7 @@ export default class Salaries extends Model {
             id: this.uid(),
             pid: this.attr(null),
             amount: this.number(null),
-            year: this.number(null)
+            season: this.number(null)
         }
     }
 }

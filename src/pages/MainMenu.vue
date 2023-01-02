@@ -242,7 +242,6 @@ export default {
         value1() {
             let obj = this
             if(obj.value1 > 100) {
-                obj.loading = false
                 obj.endProgress();
                 console.log("Loading over")
             }
@@ -260,17 +259,26 @@ export default {
             this.continueDialog = true;
         },
         hideDialog() {
+            console.log("Hide Dialog")
             this.coachDialog = false;
             this.continueDialog = false;
             this.loadingDialog = false;
             this.submitted = false;
 
+            if(this.loading) {
+                console.log("Loading")
+                this.$router.push('dashboard')
+                this.loading = false
+            }
+
             if(this.creating) {
+                console.log("Creating")
                 this.$router.push('dashboard')
                 this.creating = false
             }
 
             if(this.deleting) {
+                console.log("Deleting")
                 this.$router.push('/')
                 this.deleting = false
             }
@@ -335,7 +343,7 @@ export default {
         async loadSelectedCareer(name) {
             let obj = this
             let db_name = name;
-
+            obj.loading = true
             obj.restartTimer();
 
             console.log("DB: " + db_name)
@@ -387,7 +395,7 @@ export default {
             this.interval = null;
             setTimeout(() => {
                 this.hideDialog()
-            }, 2000);
+            }, 500);
         },
         deleteSelectedCareer(db) {
             let obj = this

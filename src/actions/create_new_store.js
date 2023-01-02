@@ -11,6 +11,11 @@ import Contract from '@/models/Contract';
 import Born from '@/models/Born';
 import Draft from '@/models/Draft';
 import Injury from '@/models/Injury';
+import Salaries from '@/models/Salaries';
+import Stats from '@/models/Stats';
+import Attributes from '@/models/Attributes';
+import Overalls from '@/models/Overalls';
+import Potentials from '@/models/Potentials';
 
 export function createNewStore() {
     const database = new VuexORM.Database()
@@ -23,6 +28,11 @@ export function createNewStore() {
     database.register(Born);
     database.register(Draft);
     database.register(Injury);
+    database.register(Salaries);
+    database.register(Stats);
+    database.register(Attributes);
+    database.register(Overalls);
+    database.register(Potentials);
 
     let store = new Vuex.Store({
         actions: {

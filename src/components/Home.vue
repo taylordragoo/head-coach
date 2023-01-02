@@ -114,7 +114,7 @@ export default {
         players: {
             /* By default get() is used */
             get() {
-                return Player.all()
+                return Player.query().with('born').with('contract').with('injury').with('draft').all()
             },
             /* We add a setter */
             set(value) {
@@ -124,7 +124,7 @@ export default {
         teams: {
             /* By default get() is used */
             get() {
-                return Team.query().with('players').orderBy('region').all()
+                return Team.query().with('players.*').orderBy('region').all()
             },
             /* We add a setter */
             set(value) {
