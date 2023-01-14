@@ -106,6 +106,8 @@ import NotFound from './pages/NotFound';
 import Vuex from 'vuex';
 import { createNewStore } from './store/index'
 import { UserController } from '@/controllers/UserController';
+import StoreService from '@/service/StoreService';
+import StoreController from '@/controllers/StoreController';
 
 const app = createApp({
     computed: {
@@ -224,7 +226,8 @@ app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('BlockViewer', BlockViewer);
 
-let store = createNewStore()
+const storeController = new StoreController()
+const store = storeController.create()
 app.use(store);
 
 app.mount('#app');

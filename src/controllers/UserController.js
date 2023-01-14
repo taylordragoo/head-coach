@@ -1,24 +1,16 @@
 import User from '@/models/User';
 import { WorldController } from '@/controllers/index';
+import { UserService } from '@/service';
 
 export default class UserController {
 
-    create(obj) {
-        const worldController = new WorldController()
+    constructor() {
+        this.userService = new UserService()
+    }
 
-        User.insert({
-            data: {
-                id: 0,
-                first: obj.first,
-                last: obj.last,
-                age: obj.age,
-                exp: obj.exp,
-                skill: obj.skill,
-                team_id: obj.team_id
-            }
-        })
+    create(obj) {
+        this.userService.handleCreateNewUser(obj)
         console.log("User Created");
-        worldController.create()
     }
 
     read(obj) {

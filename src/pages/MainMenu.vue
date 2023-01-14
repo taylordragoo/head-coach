@@ -133,7 +133,7 @@
             <div class="row">
                 <div class="col-md-2">
                 </div>
-                <div class="col-md-1" v-for='save in databases'>
+                <div class="col-md-1" v-for='save in this.databases'>
                     <div class="p-fluid">
                         <h5>{{ save }}</h5>
                         <div class="field grid">
@@ -180,13 +180,25 @@
 
 <script>
 import { Dexie } from 'dexie';
-import { initNewCareer } from "@/database/index";
 import User from '@/models/User';
 import Team from '@/models/Team';
 import Player from '@/models/Player';
 import World from '@/models/World';
 import League from '@/models/League';
 import { UserController, TeamController }  from '@/controllers/index';
+import { CareerController } from '@/controllers/index';
+import Attributes from '@/models/Attributes';
+import Born from '@/models/Born';
+import Contract from '@/models/Contract';
+import Draft from '@/models/Draft';
+import Injury from '@/models/Injury';
+import Overalls from '@/models/Overalls';
+import Potentials from '@/models/Potentials';
+import Salaries from '@/models/Salaries';
+import Stats from '@/models/Stats';
+import { WorldController } from '@/controllers';
+import Division from '@/models/Division';
+import Conference from '@/models/Conference';
 
 
 export default {
@@ -226,12 +238,15 @@ export default {
             worldController: null,
             leagueController: null,
             teamController: null,
-            playerController: null
+            playerController: null,
+            careerController: null
         }
     },
     created() {
         this.userController = new UserController()
         this.teamController = new TeamController()
+        this.careerController = new CareerController()
+        this.worldController = new WorldController()
     },
     mounted() {
         this.$store.dispatch('resetState')
@@ -287,16 +302,67 @@ export default {
             console.log("Initializing database....")
             let obj = this
 
+            const db = new Dexie('default');
+
+            if (!(await Dexie.exists(db.name))) {
+                console.log("Db does not exist");
+                this.initDefaultDatabase()
+            } else {
+                console.log("Default db does exist")
+            }
+
             // get existing databases
             obj.databases = await Dexie.getDatabaseNames();
+            let index = obj.databases.indexOf('default')
+            obj.databases.splice(index,1)
         },
-        async createNewCareer() {
+        createNewCareer() {
             let obj = this
             obj.coachDialog = false
             obj.loadingDialog = true;
             obj.creating = true
             obj.restartTimer();
-            await obj.initNewCareerData()
+            setTimeout(() => {
+                obj.initNewCareerData()
+            }, 2000);
+        },
+        initDefaultDatabase() {
+            console.log("Seeding default database....")
+            let obj = this
+            try {
+
+                this.worldController.create()
+
+                let db_name = 'default'
+
+                let request = {
+                    type: "default",
+                    db_name: 'default',
+                    world: World.query().first().$toJson(),
+                    players: Player.all(),
+                    teams: Team.all(),
+                    leagues: League.all(),
+                    born: Born.all(),
+                    contract: Contract.all(),
+                    draft: Draft.all(),
+                    injury: Injury.all(),
+                    overalls: Overalls.all(),
+                    potentials: Potentials.all(),
+                    salaries: Salaries.all(),
+                    stats: Stats.all(),
+                    attributes: Attributes.all(),
+                    divisions: Division.all(),
+                    conferences: Conference.all()
+                }
+
+                // Call function that inits database and returns database
+                this.careerController.create(request);
+
+            } catch (error) {
+                console.error('' + error);
+            } finally {
+                console.log("Done")
+            }
         },
         async initNewCareerData() {
             console.log("Seeding database....")
@@ -314,27 +380,83 @@ export default {
 
             this.userController.create(create_user)
 
-            // only allow 3 saves total
             if(obj.databases.length < 3) {
                 try {
-                    console.log("Creating Database")
-                    // create DB name
-                    let db_name = create_user.first + " " + create_user.last
-                    const user = User.query().first()
-                    const world = World.query().first()
-                    const players = Player.all()
-                    const teams = Team.all()
-                    const leagues = League.all()
-                    const user_json = user.$toJson()
-                    const world_json = world.$toJson()
 
-                    // Call function that inits database and returns database
-                    obj.db = initNewCareer(db_name, user_json, world_json, teams, players, leagues)
+                    const db = new Dexie('default');
+
+                    if (!(await Dexie.exists(db.name))) {
+                        console.log("Db does not exist");
+                    } else {
+                        console.log("Default db does exist")
+                        await db.open().catch (function (err) {
+                            console.error('Failed to open db: ' + (err.stack || err));
+                        }).finally(function() {
+                            console.log(db.tables);
+                        });
+
+                        const team = await db.table('teams').toArray();
+                        const player = await db.table('players').toArray();
+                        const world = await db.table('world').toArray();
+                        const league = await db.table('leagues').toArray();
+                        const attr = await db.table('attributes').toArray();
+                        const born = await db.table('born').toArray();
+                        const contract = await db.table('contract').toArray();
+                        const draft = await db.table('draft').toArray();
+                        const injury = await db.table('injury').toArray();
+                        const overalls = await db.table('overalls').toArray();
+                        const potentials = await db.table('potentials').toArray();
+                        const salaries = await db.table('salaries').toArray();
+                        const stats = await db.table('stats').toArray();
+                        const conferences = await db.table('conferences').toArray();
+                        const divisions = await db.table('divisions').toArray();
+
+                        await Team.insert({ data: team })
+                        await Player.insert({ data: player })
+                        await League.insert({ data: league })
+                        await World.insert({ data: world })
+                        await Attributes.insert( { data: attr })
+                        await Born.insert( { data: born })
+                        await Contract.insert( { data: contract })
+                        await Draft.insert( { data: draft })
+                        await Injury.insert( { data: injury })
+                        await Overalls.insert( { data: overalls })
+                        await Potentials.insert( { data: potentials })
+                        await Salaries.insert( { data: salaries })
+                        await Stats.insert( { data: stats })
+                        await Conference.insert({ data: conferences })
+                        await Division.insert({ data: divisions })
+
+                        db.close()
+                    }
+
+                    let request = {
+                        type: "new",
+                        db: create_user.first + " " + create_user.last,
+                        user: User.query().first().$toJson(),
+                        world: World.query().first().$toJson(),
+                        players: Player.all(),
+                        teams: Team.all(),
+                        leagues: League.all(),
+                        born: Born.all(),
+                        contract: Contract.all(),
+                        draft: Draft.all(),
+                        injury: Injury.all(),
+                        overalls: Overalls.all(),
+                        potentials: Potentials.all(),
+                        salaries: Salaries.all(),
+                        stats: Stats.all(),
+                        attributes: Attributes.all(),
+                        divisions: Division.all(),
+                        conferences: Conference.all()
+                    }
+
+                    this.careerController.create(request);
 
                 } catch (error) {
                     console.error('' + error);
                 } finally {
-                    console.log(obj.db)
+                    console.log("Done")
                 }
             } else {
                 console.log('too many saves')
@@ -349,28 +471,48 @@ export default {
             console.log("DB: " + db_name)
             const db = new Dexie(db_name);
 
-            // if for some reason, IDK how, the db it loaded, doesn't actually exist
             if (!(await Dexie.exists(db.name))) {
                 console.log("Db does not exist");
-                db.version(1).stores({});
+            } else {
+                // open database
+                await db.open()
+
+                // get data from indexeddb via dexie
+                const team = await db.table('teams').toArray();
+                const player = await db.table('players').toArray();
+                const user = await db.table('user').toArray();
+                const world = await db.table('world').toArray();
+                const league = await db.table('leagues').toArray();
+                const attr = await db.table('attributes').toArray();
+                const born = await db.table('born').toArray();
+                const contract = await db.table('contract').toArray();
+                const draft = await db.table('draft').toArray();
+                const injury = await db.table('injury').toArray();
+                const overalls = await db.table('overalls').toArray();
+                const potentials = await db.table('potentials').toArray();
+                const salaries = await db.table('salaries').toArray();
+                const stats = await db.table('stats').toArray();
+                const conferences = await db.table('conferences').toArray();
+                const divisions = await db.table('divisions').toArray();
+
+                // insert data into vuex-orm store
+                await Team.insert({ data: team })
+                await User.insert({ data: user })
+                await Player.insert({ data: player })
+                await League.insert({ data: league })
+                await World.insert({ data: world })
+                await Attributes.insert( { data: attr })
+                await Born.insert( { data: born })
+                await Contract.insert( { data: contract })
+                await Draft.insert( { data: draft })
+                await Injury.insert( { data: injury })
+                await Overalls.insert( { data: overalls })
+                await Potentials.insert( { data: potentials })
+                await Salaries.insert( { data: salaries })
+                await Stats.insert( { data: stats })
+                await Conference.insert({ data: conferences })
+                await Division.insert({ data: divisions })
             }
-
-            // open database
-            await db.open()
-
-            // get data from indexeddb via dexie
-            const team = await db.table('teams').toArray();
-            const player = await db.table('players').toArray();
-            const user = await db.table('user').toArray();
-            const world = await db.table('world').toArray();
-            const league = await db.table('leagues').toArray();
-
-            // insert data into vuex-orm store
-            await Team.insert({ data: team })
-            await User.insert({ data: user })
-            await Player.insert({ data: player })
-            await League.insert({ data: league })
-            await World.insert({ data: world })
 
         },
         restartTimer() {
@@ -401,14 +543,7 @@ export default {
             let obj = this
             obj.deleting = true
             obj.restartTimer();
-            console.log("Deleting database...")
-            Dexie.delete(db).then(() => {
-                console.log("Database successfully deleted");
-            }).catch((err) => {
-                console.error("Could not delete database");
-            }).finally(() => {
-                this.checkForData()
-            });
+            this.careerController.delete(db);
         }
 
     }

@@ -176,6 +176,18 @@ import Team from '@/models/Team';
 import Player from '@/models/Player';
 import World from '@/models/World';
 import League from '@/models/League';
+import Born from '@/models/Born';
+import Contract from '@/models/Contract';
+import Draft from '@/models/Draft';
+import Injury from '@/models/Injury';
+import Overalls from '@/models/Overalls';
+import Potentials from '@/models/Potentials';
+import Salaries from '@/models/Salaries';
+import Stats from '@/models/Stats';
+import Attributes from '@/models/Attributes';
+import Division from '@/models/Division';
+import Conference from '@/models/Conference';
+import { CareerController, TeamController, UserController, WorldController } from '@/controllers';
 
 export default {
     name: "AppTopbar",
@@ -203,6 +215,9 @@ export default {
             finish_saving: false,
             save_count: 0
         };
+    },
+    created() {
+        this.careerController = new CareerController()
     },
     watch: {
         value1() {
@@ -275,7 +290,29 @@ export default {
         },
         onSaveMenuButtonClick() {
             let obj = this
-            saveGame(obj.user.first + ' ' + obj.user.last, JSON.stringify(obj.players), JSON.stringify(obj.teams), JSON.stringify(obj.user), JSON.stringify(obj.world), JSON.stringify(obj.league))
+
+            let request = {
+                type: "save",
+                db: obj.user.first + ' ' + obj.user.last,
+                user: User.query().first().$toJson(),
+                world: World.query().first().$toJson(),
+                players: Player.all(),
+                teams: Team.all(),
+                leagues: League.all(),
+                born: Born.all(),
+                contract: Contract.all(),
+                draft: Draft.all(),
+                injury: Injury.all(),
+                overalls: Overalls.all(),
+                potentials: Potentials.all(),
+                salaries: Salaries.all(),
+                stats: Stats.all(),
+                attributes: Attributes.all(),
+                divisions: Division.all(),
+                conferences: Conference.all()
+            }
+
+            this.careerController.update(request);
             obj.openSave()
         },
         onRightMenuClick(event) {
@@ -303,7 +340,7 @@ export default {
                 }
                 this.value1 = newValue;
                 console.log(this.value1);
-            }, 500);
+            }, 0);
         },
         endProgress() {
             console.log('ending loading')
@@ -323,7 +360,7 @@ export default {
         },
         openExit() {
             this.exitDialog = true;
-            this.restartTimer(400);
+            this.restartTimer(0);
         },
         hideDialog() {
 
@@ -341,7 +378,7 @@ export default {
         players: {
             /* By default get() is used */
             get() {
-                return Player.query().with('born').with('contract').with('injury').all()
+                return Player.query().all()
             },
             /* We add a setter */
             set(value) {
@@ -351,7 +388,7 @@ export default {
         teams: {
             /* By default get() is used */
             get() {
-                return Team.query().with('players').all()
+                return Team.all()
             },
             /* We add a setter */
             set(value) {
@@ -361,7 +398,7 @@ export default {
         user: {
             /* By default get() is used */
             get() {
-                return User.query().with('world').with('team.players').first()
+                return User.query().first()
             },
             /* We add a setter */
             set(value) {
@@ -371,7 +408,7 @@ export default {
         league: {
             /* By default get() is used */
             get() {
-                return League.query().with('teams.players').all()
+                return League.all()
             },
             /* We add a setter */
             set(value) {
@@ -381,7 +418,7 @@ export default {
         world: {
             /* By default get() is used */
             get() {
-                return World.query().with('leagues.teams.players').first()
+                return World.query().first()
             },
             /* We add a setter */
             set(value) {

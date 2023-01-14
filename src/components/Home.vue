@@ -61,7 +61,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Players</h4>
-                        <Dropdown :options="teams" v-model="selectedTeam" optionLabel="full_name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
+                        <Dropdown :options="league.teams" v-model="selectedTeam" optionLabel="full_name" @change="recentSales($event)" class="dashbard-demo-dropdown"></Dropdown>
                     </div>
                     <p>Your sales activity over time.</p>
                     <DataTable v-if='selectedTeam != null' :value="selectedTeam.players" :paginator="true" :rows="20" responsiveLayout="scroll">
@@ -94,6 +94,7 @@ import Player from '@/models/Player';
 import Team from '@/models/Team';
 import User from '@/models/User';
 import League from '@/models/League';
+import { CareerController } from '@/controllers';
 
 export default {
     data() {
@@ -103,6 +104,7 @@ export default {
             productsThisWeek: null,
             productsLastWeek: null,
             productService: null,
+            careerController: null
         };
     },
     filters: {
@@ -144,7 +146,7 @@ export default {
         league: {
             /* By default get() is used */
             get() {
-                return League.query().with('teams').all()
+                return League.query().with('teams.players.*').with('conferences').with('divisions').first()
             },
             /* We add a setter */
             set(value) {
@@ -209,8 +211,15 @@ export default {
             });
         },
     },
+    created(){
+        this.careerController = new CareerController()
+    },
     mounted() {
-        this.selectedTeam = this.teams.find(e => e.tid === this.user.team_id)
+        this.selectedTeam = this.league.teams.find(e => e.tid === this.user.team_id)
+        const request = {
+            type: 'generate'
+        }
+        this.careerController.create(request)
     }
 };
 </script>

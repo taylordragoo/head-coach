@@ -28,7 +28,7 @@ export default class Player extends Model {
             stats: this.hasMany(Stats, 'pid'),
             attributes: this.hasOne(Attributes, 'pid'),
             overalls: this.hasOne(Overalls, 'pid'),
-            potentials: this.hasOne(Potentials, 'pid'),
+            potentials: this.hasOne(Potentials, 'pid')
         }
     }
 }
