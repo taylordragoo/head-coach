@@ -170,7 +170,6 @@
 <script>
 import moment from 'moment';
 import AppMenu from "./AppMenu";
-import { saveGame } from '@/database/index'
 import User from '@/models/User';
 import Team from '@/models/Team';
 import Player from '@/models/Player';
@@ -187,7 +186,7 @@ import Stats from '@/models/Stats';
 import Attributes from '@/models/Attributes';
 import Division from '@/models/Division';
 import Conference from '@/models/Conference';
-import { CareerController, TeamController, UserController, WorldController } from '@/controllers';
+import { CareerController } from '@/controllers';
 
 export default {
     name: "AppTopbar",

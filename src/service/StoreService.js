@@ -17,6 +17,8 @@ import Vuex from 'vuex';
 import Transactions from '@/models/Transaction';
 import Conference from '@/models/Conference';
 import Division from '@/models/Division';
+import Matchup from '@/models/Matchup';
+import Schedule from '@/models/Schedule';
 
 export default class StoreService {
 
@@ -62,5 +64,7 @@ export default class StoreService {
         database.register(Transactions);
         database.register(Conference);
         database.register(Division);
+        database.register(Matchup);
+        database.register(Schedule);
     }
 }

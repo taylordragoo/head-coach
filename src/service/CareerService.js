@@ -2,6 +2,8 @@ import Dexie from 'dexie';
 import Division from '@/models/Division';
 import Conference from '@/models/Conference';
 import Team from '@/models/Team';
+import Matchup from '@/models/Matchup';
+import _ from 'lodash';
 
 export default class CareerService {
 
@@ -646,9 +648,10 @@ export default class CareerService {
     handleGenerateSchedule() {
         console.log("Generating Schedule");
         const schedule = [];
-        const divisions = Division.all()
-        const conferences = Conference.all()
+        const divisions = Division.query().with('teams').all()
+        const conferences = Conference.query().with('teams').all()
         const teams = Team.all()
+
         // Each team plays the other three teams in its own division twice
         for (let division in divisions) {
             for (let i = 0; i < divisions[division].length; i++) {
@@ -724,7 +727,134 @@ export default class CareerService {
                 }
             }
         }
-        console.log(JSON.stringify(schedule))
+
         return JSON.stringify(schedule);
     }
+
+    handleNewScheduleDefault() {
+        let cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tryNum;
+        let homeGames;
+        let iRandom,kk;
+
+        teams = Team.all()
+
+        tids = [];  // tid_home, tid_away
+        iRandom = [];
+
+        // Collect info needed for scheduling
+        for (i = 0; i < teams.length; i++) {
+            iRandom.push(i);
+            teams[i].homeGames = 0;
+            teams[i].awayGames = 0;
+        }
+
+        _.shuffle(iRandom);
+
+        for (ii = 0; ii < teams.length; ii++) {
+            i = iRandom[ii];
+            for (jj = 0; jj < teams.length; jj++) {
+                j = iRandom[jj];
+
+                if (teams[i].tid !== teams[j].tid) {
+                    game = [teams[i].tid, teams[j].tid];
+
+                    // Constraint: 1 home game vs. each team in other conference
+                    if (teams[i].cid !== teams[j].cid) {
+                        teams[i].homeGames += 0;
+                        teams[j].awayGames += 0;
+                        Matchup.insert({
+                            data: {
+                                homeTid: teams[i].tid,
+                                awayTid: teams[j].tid,
+                                week: i,
+                                sid: 0
+                            }
+                        })
+                    }
+
+                    // Constraint: 2 home schedule vs. each team in same division
+                    // Constraint: 1 home schedule vs. each team in same division
+                    // 6 games, 10 left
+                    if (teams[i].did === teams[j].did) {
+                        tids.push(game);
+                        teams[i].homeGames += 1;
+                        teams[j].awayGames += 1;
+                        Matchup.insert({
+                            data: {
+                                homeTid: teams[i].tid,
+                                awayTid: teams[j].tid,
+                                week: i,
+                                sid: 0
+                            }
+                        })
+                    }
+
+                    // Constraint: 1-2 home schedule vs. each team in same conference and different division
+                    // Only do 1 now
+                    // home against team 1 ahead, away against team 1 back
+                    if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
+                        teams[i].homeGames += 0;
+                        teams[j].awayGames += 0;
+                        Matchup.insert({
+                            data: {
+                                homeTid: teams[i].tid,
+                                awayTid: teams[j].tid,
+                                week: i,
+                                sid: 0
+                            }
+                        })
+
+                    }
+                }
+            }
+        }
+
+        //http://operations.nfl.com/the-game/creating-the-nfl-schedule/
+        // same conference different division
+        // diff conference
+        // play teams 8 before home, and 8 after away
+        let loops;
+        loops = 0;
+        for (ii = 0; ii < teams.length; ii++) {
+            i = iRandom[ii];
+            homeGames = 0;
+            kk = ii+1;
+            k = iRandom[kk];
+
+            if (kk > (teams.length-1)) {
+                kk = 0;
+                k  = iRandom[kk];
+            }
+            while (homeGames < 5) {
+                game = [teams[i].tid, teams[k].tid];
+                // 8 away games is total. Already start with 3.
+                if  ((teams[i].did !== teams[k].did || loops > 2) &&  (teams[k].awayGames <8)) {
+                    tids.push(game);
+                    teams[i].homeGames += 1;
+                    teams[k].awayGames += 1;
+                    homeGames +=1;
+                    Matchup.insert({
+                        data: {
+                            homeTid: teams[i].tid,
+                            awayTid: teams[k].tid,
+                            week: i,
+                            sid: 0
+                        }
+                    })
+                }
+
+                kk += 1;
+                if (kk > (teams.length-1)) {
+                    kk=0;
+                    loops += 1;
+                }
+                k= iRandom[kk];
+            }
+        }
+
+        console.log("finished: " + teams[0].homeGames + " " + teams[0].awayGames);
+
+        return tids;
+    }
+
 }

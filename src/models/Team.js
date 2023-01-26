@@ -15,6 +15,8 @@ export default class Team extends Model {
             abbrev: this.attr(''),
             pop: this.attr(null),
             lid: this.attr(''),
+            awayGames: this.number(0),
+            homeGames: this.number(0),
             players: this.hasMany(Player, 'ptid')
         }
     }

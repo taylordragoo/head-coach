@@ -156,7 +156,7 @@ export default {
         world: {
             /* By default get() is used */
             get() {
-                return World.query().with('leagues').first()
+                return World.query().with('leagues.teams.players.*').with('leagues.conferences').with('leagues.divisions').first()
             },
             /* We add a setter */
             set(value) {

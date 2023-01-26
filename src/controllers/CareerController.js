@@ -9,17 +9,17 @@ export default class CareerController {
     create(request) {
         console.log(request.type);
         const x = request.type
-        this.careerService.handleGenerateSchedule(request)
+        // this.careerService.handleGenerateSchedule(request)
         switch(x) {
-            case (x == 'new'):
+            case 'new':
                 this.careerService.handleCreateNewCareer(request)
                 break;
-            case (x == 'default'):
+            case 'default':
                 this.careerService.handleCreateDefaultDatabase(request)
                 break;
-            case (x == 'generate'):
+            case 'generate':
                 console.log("called this")
-                this.careerService.handleGenerateSchedule(request)
+                this.careerService.handleNewScheduleDefault(request)
                 break;
             default:
                 return;
